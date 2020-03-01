@@ -98,12 +98,10 @@ body {
     margin-bottom: 200px;
     padding: 50px;
     border-radius: 100%;
-    border: 4px dotted #90303d;
     color: #ed8240;
 }
 
 .profile-image {
-    transform: rotate(-30deg);
     background-color: #ed8240;
     border: 1px solid #90303d;
     
