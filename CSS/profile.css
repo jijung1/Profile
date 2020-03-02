@@ -2,7 +2,7 @@
 
 .container {
 
-    background: linear-gradient(.60turn, #90303d,#d2ebe9);
+    background: rgb(240, 237, 237);
 
 }
 
@@ -23,7 +23,7 @@ body {
     display: flex; /* flexbox */
     justify-content: space-between;
     padding: 3.5%;
-    background-color: #230444;
+    background-color: #232f3e;
     padding-bottom: 1%;
     margin-bottom: 2%;
 
@@ -32,7 +32,7 @@ body {
 
 .left-side {
     display: flex;
-    color: #ed8240;
+    color: white;
 }
 .nav-wrapper > .left-side > div {
     margin-right: 15%;
@@ -42,7 +42,7 @@ body {
 
 .nav-wrapper > .right-side > div {
     font-size: 1.5em;
-    color: #ed8240;
+    color: white;
 }
 .nav-link-wrapper {
     height: 3.5%;
@@ -52,13 +52,13 @@ body {
 }
 
 .nav-link-wrapper a {
-    color: #ed8240;
+    color: white;
     text-decoration: none;
     transition: color 0.6s;
 }
 
 .nav-link-wrapper:hover {
-    border-bottom: 1px solid #ed8240;
+    border-bottom: 1px solid white;
 }
 .nav-link-wrapper a:hover {
     color:black;
@@ -75,10 +75,10 @@ body {
     position: fixed;
     top: 25%;
     right: .1%;
-    background-color: #230444;
+    background-color: #ffffff;
     width: 10%;
-    opacity: 80%;
-    border-radius: 10%;
+    border-radius: 5%;
+    border: solid 3px #232f3e;
 }
 .icon {
     position: relative;
@@ -97,15 +97,13 @@ body {
     margin-right: 0px;
     margin-bottom: 200px;
     padding: 50px;
-    color: #ed8240;
+    color: #232f3e;
 }
 
 .profile-image {
-    background-color: #ed8240;
-    border: 1px solid #90303d;
-    
-    border-radius: 10%;
-    padding: 1%;
+    background-color: #232f3e;
+    border-radius: 25%;
+    border: solid 3px #232f3e;
 }
 
 .portfolio-items-wrapper {
@@ -129,7 +127,7 @@ body {
     height: 50vh;
     background-position: center;
     background-repeat: no-repeat;
-    border: 2px solid whitesmoke;
+    border: 3px solid #232f3e;
     border-radius: 100%; 
     border-spacing: 15px 15px;
     color: transparent;
@@ -149,13 +147,13 @@ body {
 }
 
 .portfolio-img-background:hover {
-    border-color: #ed8240;
-    color: #ed8240 !important;
-    background-color: #230444;
+    border-color: #230444;
+    color: white !important;
+    background-color: #232f3e;
 }
 
 .footer {
-    background-color: #90303d;
+    background-color: #232f3e;
     font-size: 20%;
 }
 
