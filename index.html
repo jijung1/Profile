@@ -17,8 +17,7 @@
         <link rel="icon" type="image/png" sizes="16x16" href="icons/favicons/favicon-16x16.png">
         <link rel="manifest" href="icons/favicons/site.webmanifest">
        
-       <!-- Scripts (Consider moving to the bottome of body element) -->
-        <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+      
 
 
         <title>⌨️ Computer Scientist 🖱️</title>
@@ -32,7 +31,7 @@
                         <a href="index.html">Home</a>
                     </div>
                     <div class="nav-link-wrapper">
-                        <a href="about.html">About</a>
+                        <a href="about.html">Resume</a>
                     </div>
                 </div>
                 <div class="right-side">
@@ -72,45 +71,49 @@
                 </div>
                 <div class="portfolio-items-wrapper">
                     <div class="portfolio-item-wrapper" data-aos="fade-down">
-                        <a href="about.html#Experience">
-                        <div class="portfolio-img-background" style="background-image:url(icons/code.png)">
+                        <div class="portfolio-img-background" id="experience" style="background-image:url(icons/code.png)">
                             <h1> Experience</h1>
                         </div>
-                        </a>
                     </div>
 
-                    <div class="portfolio-item-wrapper">
+                    <div class="portfolio-item-wrapper" id=side>
+                        <div class="sideExperience">
+                            <h3>Talk about experiences here</h3>
+                        </div>
                     </div>
                     <div class="portfolio-item-wrapper">
+                        <div class = "sideCoursework">
+                            <h3>Talk about Coursework here</h3>
+                        </div>
                     </div>
 
                     <div class="portfolio-item-wrapper" data-aos="fade-up">
-                        <a href="about.html#Coursework">
-                        <div class="portfolio-img-background" style="background-image:url(icons/school.png)">     
+                        <div class="portfolio-img-background" id="coursework" style="background-image:url(icons/school.png)">     
                             <h1>Coursework</h1>
                         </div>
-                        </a>
                     </div>
 
                     <div class="portfolio-item-wrapper" data-aos="fade-up">
-                        <a href="about.html#Service">
-                        <div class="portfolio-img-background" style="background-image:url(icons/help.png)">
+                        <div class="portfolio-img-background" id="service" style="background-image:url(icons/help.png)">
                             <h2>Service to Community</h2>
                         </div>
-                        </a>
                     </div>
 
                     <div class="portfolio-item-wrapper">
+                        <div class="sideService">
+                            <h3> Talk about community service here</h3>
+                        </div>
                     </div>
                     <div class="portfolio-item-wrapper">
+                        <div class="sideInterests">
+                            <h3>Talk about interests here</h3>
+                        </div>
                     </div>
 
                     <div class="portfolio-item-wrapper" data-aos="fade-down">
-                        <a href="about.html#Coursework">
-                        <div class="portfolio-img-background" style="background-image:url(icons/park.png)">
+                        <div class="portfolio-img-background" id="interests" style="background-image:url(icons/park.png)">
                             <h2>Interests & Hobbies</h2>
                         </div>
-                        </a>
                     </div>
 
                 </div>
@@ -120,6 +123,10 @@
             <h1>Attributions for icons</h1>
             Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
         </div>
-        <script>AOS.init({duration: 500});</script>
+         <!-- Scripts (Consider moving to the bottome of body element) -->
+         <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+         <script src="index.js"></script>
+         <script>AOS.init({duration: 500});</script>
     </body>
 </html>

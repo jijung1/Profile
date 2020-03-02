@@ -118,6 +118,36 @@ body {
 
 }
 
+.sideExperience {
+    margin-top: 5em;
+    border: 3px solid #232f3e;
+    border-radius: 10px;
+    text-align:center;
+    display: none;
+}
+.sideCoursework {
+    margin-top: 5em;
+    border: 3px solid #232f3e;
+    border-radius: 10px;
+    text-align:center;
+    display: none;
+}
+.sideInterests {
+    margin-top: 5em;
+    border: 3px solid #232f3e;
+    border-radius: 10px;
+    text-align:center;
+    display: none;
+}
+.sideService {
+    margin-top: 5em;
+    border: 3px solid #232f3e;
+    border-radius: 10px;
+    text-align:center;
+    display: none;
+}
+
+
 .portfolio-item-wrapper a {
     text-decoration: none;
 }
@@ -159,29 +189,10 @@ body {
 
 /* about.html */
 
-#Experience {
+.resumeFrame {
     text-align: left;
-    width: 70%;
-    margin: 5% auto;
-    height: 200vh;
-}
-#Coursework {
-    text-align: left;
-    width: 70%;
-    margin: 5% auto;
-    height: 200vh;
-}
-#Service {
-    text-align: left;
-    width: 70%;
-    margin: 5% auto;
-    height: 200vh;
-}
-#Interests {
-    text-align: left;
-    width: 70%;
-    margin: 5% auto;
-    height: 200vh;
+    width: 100%;
+    height: 110vh;
 }
 
 
