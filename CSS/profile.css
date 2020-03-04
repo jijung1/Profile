@@ -119,28 +119,28 @@ body {
 }
 
 .sideExperience {
-    margin-top: 5em;
+    margin-top: 3em;
     border: 3px solid #232f3e;
     border-radius: 10px;
-    text-align:center;
+    text-align:left;
     display: none;
 }
 .sideCoursework {
-    margin-top: 5em;
+    margin-top: 3em;
     border: 3px solid #232f3e;
     border-radius: 10px;
-    text-align:center;
+    text-align:left;
     display: none;
 }
 .sideInterests {
-    margin-top: 5em;
+    margin-top: 3em;
     border: 3px solid #232f3e;
     border-radius: 10px;
     text-align:center;
     display: none;
 }
 .sideService {
-    margin-top: 5em;
+    margin-top: 3em;
     border: 3px solid #232f3e;
     border-radius: 10px;
     text-align:center;
