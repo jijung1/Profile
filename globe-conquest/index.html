@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Globe Conquest · Prototype</title>
+<style>
+:root{--bg:#0a0c11;--panel:#141823;--line:#222939;--text:#e9ecf3;--mute:#8a93a8;--you:#3fa9ff;--ai:#ff4d6d}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;color:var(--text);overflow:hidden;
+  background:radial-gradient(1100px 700px at 50% 45%,#161d2e 0%,var(--bg) 65%);
+  font:15px/1.4 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,sans-serif;
+  user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+button{font-family:inherit}
+.top{position:fixed;left:0;right:0;top:0;z-index:6;display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;justify-content:space-between;
+  padding:max(12px,env(safe-area-inset-top)) 16px 14px;pointer-events:none;background:linear-gradient(#0a0c11f2 55%,#0a0c1100)}
+.top>*{pointer-events:auto}
+.brand b{font-size:17px;font-weight:720;letter-spacing:-.02em}
+.brand small{display:block;color:var(--mute);font-size:11.5px;margin-top:1px}
+.score{display:flex;gap:6px;align-items:center}
+.sp{display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--line);
+  font-weight:680;font-variant-numeric:tabular-nums;transition:box-shadow .25s,border-color .25s}
+.sp i{width:9px;height:9px;border-radius:50%}
+.sp.you.turn{border-color:var(--you);box-shadow:0 0 0 3px #3fa9ff33}
+.sp.ai.turn{border-color:var(--ai);box-shadow:0 0 0 3px #ff4d6d33}
+.round{color:var(--mute);font-size:12px;padding:0 2px;font-variant-numeric:tabular-nums}
+.tools{display:flex;gap:6px}
+.tb{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:999px;padding:7px 12px;font-weight:600;font-size:13px;cursor:pointer}
+.tb:hover{border-color:#34405a}
+.tb.on{background:#1d2a42;border-color:#3d5a86}
+#map{position:fixed;inset:0;z-index:2;transition:opacity .45s ease,transform .6s cubic-bezier(.2,.9,.25,1.12)}
+#map.off{opacity:0;transform:scale(.5);pointer-events:none}
+#map svg{width:100%;height:100%;display:block}
+#map svg{touch-action:none;cursor:grab}
+#map svg:active{cursor:grabbing}
+#vp path,#vp line{vector-effect:non-scaling-stroke}
+#vp .nd{cursor:pointer}
+#vp .nd:hover>circle:last-of-type{filter:brightness(1.35)}
+#svg.z0 .ll,#svg.z1 .ll,#svg.z0 .tl{display:none}
+.legend{position:absolute;left:16px;top:max(66px,calc(env(safe-area-inset-top) + 56px));font-size:11.5px;color:var(--mute);line-height:1.7;pointer-events:none}
+.mapui{position:absolute;right:16px;bottom:max(70px,calc(env(safe-area-inset-bottom) + 60px));display:flex;flex-direction:column;gap:6px}
+.mapui button{width:38px;height:38px;border-radius:12px;background:var(--panel);border:1px solid var(--line);color:var(--text);font-size:18px;line-height:1;cursor:pointer}
+.mapui button:hover{border-color:#3d5a86}
+@media (max-width:640px){.legend{display:none}}
+.mv{display:flex;gap:4px;margin-left:2px}
+.mv i{width:8px;height:8px;border-radius:50%;background:#2a3142;transition:background .2s}
+.mv i.on{background:var(--pc)}
+.tb.end{background:#1d2a42;border-color:#3d5a86}
+.tb:disabled{opacity:.4;cursor:default}
+.battle{position:fixed;left:50%;top:max(70px,calc(env(safe-area-inset-top) + 60px));z-index:45;transform:translate(-50%,-14px) scale(.96);opacity:0;pointer-events:none;
+  background:#161b28f7;border:1px solid #ffb34766;border-radius:18px;padding:12px 16px 12px;min-width:260px;max-width:calc(100vw - 20px);
+  box-shadow:0 22px 50px -16px #000e,0 0 0 4px #ffb34712;transition:transform .35s cubic-bezier(.2,.9,.25,1.25),opacity .2s;cursor:pointer}
+.battle.on{transform:translate(-50%,0) scale(1);opacity:1;pointer-events:auto}
+.bh{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}.bh b{font-size:15px}.bh small{color:var(--mute);font-size:12px}
+.brow{display:flex;align-items:center;gap:10px;margin:5px 0}
+.bl{width:44px;font-size:12px;font-weight:700}.bl b{font-variant-numeric:tabular-nums}
+.dice{display:flex;flex-wrap:wrap;gap:4px;min-height:24px}
+.die{width:22px;height:22px;border-radius:6px;background:#eef2f8;box-shadow:inset 0 0 0 2px var(--pc);display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:3px;transition:opacity .2s,transform .2s,box-shadow .2s}
+.die i{border-radius:50%;margin:1px}.die i.on{background:#151a26}
+.die.roll{animation:tumble .13s linear infinite}
+@keyframes tumble{0%{transform:rotate(-12deg) translateY(-1px)}50%{transform:rotate(12deg) translateY(1px)}100%{transform:rotate(-12deg) translateY(-1px)}}
+.die.win{transform:scale(1.12);box-shadow:inset 0 0 0 2px var(--pc),0 0 0 2px #fff,0 0 12px var(--pc)}
+.die.lose{opacity:.3;transform:scale(.9)}
+.die.idle{opacity:.55}
+.bres{font-size:13px;margin-top:6px;min-height:18px}
+.bd{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-weight:760;font-size:14px;letter-spacing:.02em;flex:none}
+.bd.sg{background:#111725}
+.crumbs i{width:8px;height:8px;border-radius:50%;display:inline-block}
+#map text{font-family:inherit}
+.dock{position:fixed;left:50%;top:50%;width:0;height:0;z-index:5;pointer-events:none}
+.go{pointer-events:auto;position:absolute;border-radius:50%;border:0;cursor:grab;touch-action:none;
+  font-weight:680;font-size:12px;line-height:1.1;color:#07131f;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  background:radial-gradient(circle at 38% 30%,#d6ecff,#8cc8ff 55%,#5aa8f5);
+  box-shadow:0 18px 44px -12px #4aa3ffaa,inset 0 1px 0 #ffffffaa,inset 0 -6px 14px #2f7fd455;transition:transform .14s,filter .3s}
+.go::before{content:"";position:absolute;inset:-10px;border-radius:50%;border:1.5px solid #7cc4ff66;animation:ring 2.6s ease-out infinite;pointer-events:none}
+@keyframes ring{0%{transform:scale(.9);opacity:.9}100%{transform:scale(1.3);opacity:0}}
+.go:active{transform:scale(.95)}
+.go.wait{filter:grayscale(.8) brightness(.6);pointer-events:none}
+.go.wait::before{animation:none;opacity:0}
+.go .ic{line-height:1}
+.status{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;
+  background:#151a26ee;border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-size:13px;color:#cfd6e6;white-space:nowrap;
+  max-width:calc(100vw - 20px);overflow:hidden;text-overflow:ellipsis}
+.status b{font-weight:680}
+.info{position:fixed;left:50%;bottom:max(62px,calc(env(safe-area-inset-bottom) + 52px));z-index:7;transform:translate(-50%,16px);opacity:0;pointer-events:none;
+  background:#181e2cf5;border:1px solid #2c3448;border-radius:18px;padding:10px 10px 10px 14px;display:flex;align-items:center;gap:12px;
+  box-shadow:0 18px 40px -14px #000d;transition:transform .35s cubic-bezier(.2,.9,.25,1.2),opacity .2s;white-space:nowrap}
+.info.on{transform:translate(-50%,0);opacity:1;pointer-events:auto}
+.info .e{font-size:26px}
+.info b{display:block;font-size:14.5px}
+.info small{color:var(--mute);font-size:12px}
+.info button{background:#2a4a78;color:#fff;border:0;border-radius:999px;padding:8px 14px;font-weight:650;font-size:13px;cursor:pointer}
+.scrim{position:fixed;inset:0;z-index:9;background:rgba(5,7,12,.62);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);opacity:0;transition:opacity .25s;pointer-events:none}
+.scrim.on{opacity:1}
+#layers{position:fixed;inset:0;z-index:10;pointer-events:none}
+#layers canvas{position:absolute;inset:0;width:100%;height:100%;will-change:transform,filter,opacity;
+  transition:filter .45s cubic-bezier(.2,.8,.2,1),opacity .45s cubic-bezier(.2,.8,.2,1),transform .6s cubic-bezier(.2,.8,.2,1)}
+#stage{position:fixed;inset:0;z-index:30;pointer-events:none;touch-action:none;cursor:grab}
+#stage.on{pointer-events:auto}
+.crumbs{position:fixed;left:50%;top:max(14px,env(safe-area-inset-top));z-index:40;transform:translate(-50%,-160%);
+  display:flex;align-items:center;gap:4px;padding:5px;border-radius:999px;background:#161b28ee;border:1px solid #283044;
+  box-shadow:0 14px 36px -14px #000d;transition:transform .4s cubic-bezier(.2,.9,.25,1.15);white-space:nowrap;max-width:calc(100vw - 24px)}
+.crumbs.on{transform:translate(-50%,0)}
+.crumbs button{border:0;background:none;color:var(--text);font-weight:600;font-size:13.5px;padding:7px 11px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.crumbs button:hover{background:#ffffff0d}
+.crumbs .back{background:#262e42;width:34px;height:34px;padding:0;justify-content:center;font-size:17px}
+.crumbs .sep{color:#4b5468;font-size:12px}
+.crumbs .cur{color:#fff;background:#ffffff10}
+.toast{position:fixed;left:50%;top:max(70px,calc(env(safe-area-inset-top) + 60px));z-index:50;transform:translate(-50%,-20px);opacity:0;
+  background:#1c2232f5;border:1px solid #2c3448;border-radius:16px;padding:9px 16px 9px 10px;display:flex;align-items:center;gap:10px;
+  box-shadow:0 18px 40px -14px #000d;transition:transform .4s cubic-bezier(.2,.9,.25,1.25),opacity .2s;pointer-events:none;white-space:nowrap;font-size:13.5px}
+.toast.on{transform:translate(-50%,0);opacity:1}
+.toast .e{font-size:24px;width:40px;height:40px;display:grid;place-items:center;border-radius:12px}
+.toast small{display:block;color:var(--mute);font-size:12px}
+.over{position:fixed;inset:0;z-index:60;display:none;place-items:center;background:rgba(5,7,12,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.over.on{display:grid}
+.over .card{background:#151a26;border:1px solid #2c3448;border-radius:22px;padding:26px 28px;text-align:center;min-width:280px;animation:pop .5s cubic-bezier(.2,.9,.25,1.3)}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+.over h2{margin:0 0 6px;font-size:24px;letter-spacing:-.02em}
+.over p{margin:0 0 18px;color:var(--mute);font-size:14px;line-height:1.6}
+.over button{background:linear-gradient(180deg,#b4ddff,#6fb9ff);color:#07131f;border:0;border-radius:999px;padding:11px 22px;font-weight:700;font-size:14px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand"><b>Globe Conquest</b><small>5 moves a turn · claim sites · contest rivals · hold realms</small></div>
+  <div class="score">
+    <div class="sp you" id="spYou"><i style="background:var(--you)"></i><span id="scYou">0</span></div>
+    <div class="sp ai" id="spAi"><i style="background:var(--ai)"></i><span id="scAi">0</span></div>
+    <span class="round" id="round"></span><span class="mv" id="mv" title="Moves left this turn"></span>
+  </div>
+  <div class="tools">
+    <button class="tb on" id="tgMap">◎ Exploded view</button>
+    <button class="tb end" id="endTurn">End turn ›</button><button class="tb" id="newGame">New game</button>
+  </div>
+</div>
+
+<div id="map"><svg id="svg"><g id="vp"></g></svg>
+  <div class="legend"><span style="color:var(--you)">●</span> You &nbsp;<span style="color:var(--ai)">●</span> AI &nbsp;<span style="color:#5d667b">●</span> Unclaimed<br>Colored strands: realm → territory → site<br>Light lines: borders · dashed: crossings via near pole / far side<br>Drag to pan · scroll or pinch to zoom · click to inspect</div>
+  <div class="mapui" id="mapui"><button data-z="in" title="Zoom in">+</button><button data-z="out" title="Zoom out">−</button><button data-z="fit" title="Fit all">⤢</button></div></div>
+
+<div class="dock" id="dock"><button class="go" id="go"><span class="ic"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9.2"/><ellipse cx="12" cy="12" rx="4.2" ry="9.2"/><path d="M2.8 12h18.4M4.6 7h14.8M4.6 17h14.8"/></svg></span><span class="lb">Hold &amp; drag</span></button></div>
+<div class="info" id="info"></div>
+<div class="battle" id="battle" title="Click to speed up"><div class="bh"><b id="bT"></b><small id="bS"></small></div>
+  <div class="brow"><span class="bl" style="color:var(--you)">You <b id="nA"></b></span><div class="dice" id="dA"></div></div>
+  <div class="brow"><span class="bl" style="color:var(--ai)">AI <b id="nD"></b></span><div class="dice" id="dD"></div></div>
+  <div class="bres" id="bR"></div></div>
+<div class="status" id="status"></div>
+
+<div class="scrim" id="scrim"></div>
+<div id="layers"></div>
+<div id="stage"></div>
+<div class="crumbs" id="crumbs"></div>
+<div class="toast" id="toast"></div>
+<div class="over" id="over"><div class="card"><h2 id="ovT"></h2><p id="ovP"></p><button id="ovB">Play again</button></div></div>
+
+<script>
+(()=>{
+const TAU=Math.PI*2,D2R=Math.PI/180;
+const SIG=20,K=8,M=18;
+const ORDER=[6,7,0,1,2,3,4,5];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const EMOJI='"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+const UI='system-ui,-apple-system,"Segoe UI",sans-serif';
+const PC=['#5d667b','#3fa9ff','#ff4d6d'],PN=['','You','AI'];
+
+/* ================= Content: 8 realms × 8 territories × 8–12 sites ================= */
+// Opposite realms sit across the globe: Terran↔Abyssal, Dune↔Glacial, Infested↔Verdant, Ascendant↔Iron
+const REALMS=[
+ {n:'Terran Dominion',t:'TD',c:'#a3b6d1',sig:'chev',
+  terr:[['Sol Prime','SP'],['New Kyoto','NK'],['Bastion Reach','BR'],['Helios Ring','HR'],['Port Meridian','PM'],['Ironvale','IV'],['Aurora Station','AS'],['Cygnus Gate','CG']],
+  sites:['Spaceport','Foundry','Barracks','Arcology','Shipyard','Comms Relay','Citadel','Agri-Dome','Research Lab','Orbital Dock','Refinery','Command Hub']},
+ {n:'Dune Expanse',t:'DE',c:'#e6b566',sig:'tri',
+  terr:[['Kharon Basin','KB'],['Saffron Sea','SS'],['Glass Flats','GF'],['Mirage Spires','MS'],['Sandveil','SV'],['Ochre Rift','OR'],['Sunscar','SC'],['Dustwind Pass','DP']],
+  sites:['Spice Well','Sand Fort','Oasis','Dune Bazaar','Wind Trap','Salt Mine','Caravanserai','Sun Temple','Buried Vault','Sietch','Glass Kiln','Storm Watch']},
+ {n:'Infested Lands',t:'IL',c:'#b07cf0',sig:'tre',
+  terr:[['Brood Hollow','BH'],['Sporefall','SF'],['The Writhing','TW'],['Chitin Wastes','CW'],['Gloom Marsh','GM'],['Hive Spire','HS'],['Rotroot','RR'],['Carapace Ridge','CR']],
+  sites:['Hatchery','Spawning Pool','Spore Vent','Creep Tumor','Nest','Biomass Pit','Brood Chamber','Lair','Toxic Bog','Burrow','Cocoon Field','Hive Mind']},
+ {n:'Ascendant Concord',t:'AC',c:'#5fe3c7',sig:'hex',
+  terr:[['Elysium Array','EA'],['Prism Throne','PT'],['Aetherium','AE'],['Celestine','CE'],['Lumen Archive','LA'],['Zenith Choir','ZC'],['Halcyon','HA'],['Paragon Vault','PV']],
+  sites:['Nexus','Warp Gate','Psi Spire','Crystal Matrix','Stasis Ward','Astral Forge','Sanctum','Observatory','Void Lens','Harmonic Pylon','Reliquary','Conclave']},
+ {n:'Abyssal Trench',t:'AT',c:'#8a8cf5',sig:'ring',
+  terr:[['Hadal Rift','HD'],['Leviathan Deep','LD'],['Coral Bastion','CB'],['Brine Abyss','BA'],['Pearl Hollow','PH'],['Kelp Labyrinth','KL'],['Thermal Vents','TV'],['Sunken Crown','SK']],
+  sites:['Pressure Dome','Vent Farm','Sonar Array','Pearl Mine','Sub Pen','Kelp Grove','Trench Lab','Sunken Ruin','Current Gate','Dive Dock','Reef Wall','Abyss Beacon']},
+ {n:'Glacial Frontier',t:'GF',c:'#cfe9f7',sig:'ast',
+  terr:[['Rimefall','RF'],['Frostspire','FS'],['White Silence','WS'],['Cryo Vale','CV'],['Aurora Shelf','AU'],['Hoarfrost Keep','HK'],['Shiver Pass','SH'],['Glacier Throne','GT']],
+  sites:['Ice Bastion','Cryo Vault','Thermal Hub','Snow Fort','Glacier Mine','Signal Mast','Frost Forge','Ice Harbor','Survey Camp','Avalanche Wall','Polar Lab','Rime Shrine']},
+ {n:'Verdant Overgrowth',t:'VO',c:'#86d46b',sig:'dia',
+  terr:[['Emerald Canopy','EC'],['Thornwild','TH'],['Mossdeep','MD'],['Sylvan Heart','SY'],['Bloomfall','BF'],['Rootcradle','RC'],['Vinewall','VW'],['Elderwood','EW']],
+  sites:['Grove','Seed Vault','Canopy Village','Root Shrine','Herb Garden','Treetop Watch','Spring','Ranger Lodge','Pollen Field','Ancient Tree','Vine Bridge','Druid Circle']},
+ {n:'Iron Collective',t:'IC',c:'#c9c27a',sig:'sq',
+  terr:[['Gearhold','GH'],['Forge Prime','FP'],['Rustfield','RU'],['Cogspire','CS'],['Circuit Plains','CP'],['Smelter Bay','SB'],['Anvil Core','AN'],['Servo Gate','SG']],
+  sites:['Assembly Line','Smelter','Power Core','Drone Bay','Data Node','Scrapyard','Mech Hangar','Signal Tower','Battery Farm','Fabricator','Control Node','Rail Depot']},
+];
+const abbr=s=>{const w=s.split(/[\s-]+/);return w.length>1?(w[0][0]+w[1][0]).toUpperCase():s[0].toUpperCase()+s[1].toLowerCase()};
+const FAM=REALMS.map((R,ri)=>({n:R.n,e:R.t,c:R.c,sig:R.sig,
+  cats:R.terr.map(([name,mono],ci)=>{const n=8+((ri*3+ci*5)%5),list=[];for(let k=0;k<n;k++)list.push(R.sites[(ci*5+k)%12]);return[mono,name,list];})}));
+
+/* realm sigils: one SVG path per realm, shared by the map (SVG) and the globe (canvas Path2D) */
+function sigilD(kind,r){
+  const P=(pts)=>'M'+pts.map(([x,y])=>`${(x*r).toFixed(2)} ${(y*r).toFixed(2)}`).join('L')+'Z';
+  const circ=(cx,cy,rr)=>`M${(cx+rr)*r} ${cy*r}A${rr*r} ${rr*r} 0 1 0 ${(cx-rr)*r} ${cy*r}A${rr*r} ${rr*r} 0 1 0 ${(cx+rr)*r} ${cy*r}Z`;
+  switch(kind){
+    case'hex':return P([...Array(6)].map((_,i)=>[Math.cos((i*60-90)*D2R),Math.sin((i*60-90)*D2R)]));
+    case'tri':return P([[0,-1],[.92,.7],[-.92,.7]]);
+    case'dia':return P([[0,-1],[.72,0],[0,1],[-.72,0]]);
+    case'sq':return P([[-.75,-.75],[.75,-.75],[.75,.75],[-.75,.75]])+P([[-.3,-.3],[-.3,.3],[.3,.3],[.3,-.3]]);
+    case'chev':return P([[-1,.25],[0,-.6],[1,.25],[1,.8],[0,-.05],[-1,.8]]);
+    case'tre':return[0,1,2].map(k=>{const a=(-90+k*120)*D2R;return circ(Math.cos(a)*.48,Math.sin(a)*.48,.46)}).join('');
+    case'ring':return circ(0,0,1)+circ(0,0,.5);
+    case'ast':return P([...Array(12)].map((_,i)=>{const rr=i%2?.42:1,a=(i*30-90)*D2R;return[Math.cos(a)*rr,Math.sin(a)*rr]}));
+  }
+}
+const SIGP=new Map();const sigP=(k,r)=>{const key=k+r.toFixed(1);if(!SIGP.has(key))SIGP.set(key,new Path2D(sigilD(k,r)));return SIGP.get(key)};
+
+
+/* ================= Board ================= */
+const ROOT={e:'W',n:'World',root:true,c:'#7cc4ff',children:[]};
+FAM.forEach((f,fi)=>f.cats.forEach(([e,n,list],ci)=>{
+  const cat={e,n,c:f.c,fam:fi,idx:ci,step:ORDER[fi],ring:ci+1,parent:ROOT,children:[]};
+  list.forEach((ty,i)=>cat.children.push({e:abbr(ty),n:ty,c:f.c,parent:cat,i}));
+  cat.plots=new Array(cat.children.length).fill(0);
+  ROOT.children.push(cat);
+}));
+const CATS=ROOT.children;
+const GRID=[...Array(8)].map(()=>Array(K+1).fill(null));CATS.forEach(c=>GRID[c.step][c.ring]=c);
+// adjacency follows the globe: along a spoke, around a ring, and across both poles (ring 1 via the center, ring 8 via the far side)
+CATS.forEach(c=>{const s=c.step,r=c.ring,o=[];
+  if(r>1)o.push(GRID[s][r-1]);if(r<K)o.push(GRID[s][r+1]);
+  o.push(GRID[(s+1)%8][r],GRID[(s+7)%8][r]);if(r===1||r===K)o.push(GRID[(s+4)%8][r]);
+  c.nb=o;});
+
+/* ================= Game rules ================= */
+const MOVES=5,SEED=20;
+const GAME={turn:1,round:1,max:20,over:false,last:null,busy:false,moves:MOVES,queue:[],battle:null};
+const cnt=(c,p)=>{let n=0;for(const v of c.plots)if(v===p)n++;return n};
+const ctrl=c=>{const a=cnt(c,1),b=cnt(c,2);return a>b?1:b>a?2:0};
+const locked=c=>c.plots.every(v=>v);                       // full: no open sites left
+const total=p=>CATS.reduce((a,c)=>a+cnt(c,p),0);
+function reach(p){const S=new Set();
+  for(const c of CATS)if(cnt(c,p)){S.add(c);for(const x of c.nb)S.add(x);}
+  for(const c of[...S])if(locked(c))S.delete(c);return S;}
+function famCount(p){let f=0;FAM.forEach((_,fi)=>{let k=0;for(const c of CATS)if(c.fam===fi&&ctrl(c)===p)k++;if(k>=5)f++;});return f;}
+function score(p){let pl=0,rg=0;for(const c of CATS){pl+=cnt(c,p);if(ctrl(c)===p)rg++;}return pl+3*rg+5*famCount(p);}
+function moves(p){const out=[];for(const c of reach(p))c.plots.forEach((v,i)=>{if(!v)out.push([c,i])});return out;}
+const queued=c=>GAME.queue.some(q=>q.c===c);
+let REACH=[null,new Set(),new Set()];
+
+function newGame(){
+  for(const c of CATS)c.plots.fill(0);
+  Object.assign(GAME,{turn:1,round:1,over:false,last:null,busy:false,moves:MOVES,queue:[],battle:null});
+  // random seed: 20 sites each, anywhere on the board
+  const all=[];for(const c of CATS)c.plots.forEach((_,i)=>all.push([c,i]));
+  for(let i=all.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[all[i],all[j]]=[all[j],all[i]];}
+  all.slice(0,SEED).forEach(([c,i])=>c.plots[i]=1);all.slice(SEED,SEED*2).forEach(([c,i])=>c.plots[i]=2);
+  document.getElementById('over').classList.remove('on');document.getElementById('battle').classList.remove('on');hideInfo();refresh();
+}
+function refresh(){REACH=[null,reach(1),reach(2)];if(SEL){SEL.c?showInfo(SEL.c,SEL.leaf):showRealm(SEL.f);return refreshRest();}renderMap();refreshRest();}
+function refreshRest(){renderTop();for(const L of stack)L.dirty=true;kick();}
+function claim(p,c,i){c.plots[i]=p;GAME.last={p,c,i};refresh();}
+const myTurn=()=>GAME.turn===1&&!GAME.over&&!GAME.busy&&GAME.moves>0;
+function canSettle(c,i){return myTurn()&&!c.plots[i]&&REACH[1].has(c);}
+function canContest(p,c){return GAME.turn===p&&!GAME.over&&GAME.moves>0&&cnt(c,p)>0&&cnt(c,3-p)>0&&!queued(c);}
+
+/* ---- moves ---- */
+function spendMove(){GAME.moves--;renderTop();for(const L of stack)L.dirty=true;kick();
+  if(GAME.turn===1&&GAME.moves<=0)setTimeout(finishPlayerTurn,450);}
+function playerSettled(leaf){claim(1,leaf.parent,leaf.i);toastMove(1,leaf);spendMove();}
+function queueContest(p,c){if(!canContest(p,c))return false;GAME.queue.push({c,p});
+  toastText(`<b style="color:${PC[p]}">${PN[p]}</b> ${p===1?'contest':'contests'} <b>${c.n}</b> · ${cnt(c,p)} vs ${cnt(c,3-p)} sites · battle at end of turn`);
+  refresh();spendMove();return true;}
+function finishPlayerTurn(){
+  if(GAME.turn!==1||GAME.busy||GAME.over)return;
+  GAME.busy=true;if(stack.length)closeAll(true);renderTop();
+  runBattles(()=>{GAME.busy=false;nextTurn();});
+}
+document.getElementById('endTurn').onclick=()=>finishPlayerTurn();
+function nextTurn(){
+  if(checkOver())return;
+  GAME.turn=GAME.turn===1?2:1;if(GAME.turn===1)GAME.round++;
+  GAME.moves=MOVES;GAME.queue=[];
+  if(checkOver())return;
+  refresh();
+  if(GAME.turn===2)aiTurn();
+}
+function checkOver(){
+  const a=total(1),b=total(2);
+  if(!a||!b||GAME.round>GAME.max||(!moves(1).length&&!moves(2).length&&!CATS.some(c=>cnt(c,1)&&cnt(c,2)))){finish(!a?2:!b?1:0);return true;}
+  return false;
+}
+
+/* ---- AI: 5 moves, then its battles ---- */
+function simBattle(a,d){while(a>0&&d>0){const A=roll(Math.max(2,a)),D=roll(Math.max(2,d));
+  for(let k=0;k<Math.min(A.length,D.length)&&a>0&&d>0;k++){if(A[k]>D[k])d--;else a--;}}return a>0?1:2;}
+const roll=n=>Array.from({length:n},()=>1+Math.floor(Math.random()*6)).sort((x,y)=>y-x);
+function winProb(a,d){let w=0;for(let i=0;i<160;i++)if(simBattle(a,d)===1)w++;return w/160;}
+function aiPick(){
+  let best=null,bv=-1e9;
+  for(const c of CATS){const a=cnt(c,2),d=cnt(c,1);
+    if(a&&d&&!queued(c)){const pw=winProb(a,d),v=pw*(d*1.2+(ctrl(c)===1?3:0)+1.5)-(1-pw)*a*1.1;if(v>bv){bv=v;best={t:'contest',c};}}}
+  const base=score(2)-score(1),r0=reach(2).size;
+  for(const[c,i]of moves(2)){c.plots[i]=2;
+    const v=(score(2)-score(1)-base)+.35*(reach(2).size-r0)+(queued(c)?1.2:0)+.9*cnt(c,1)/c.plots.length+Math.random()*.45;
+    c.plots[i]=0;if(v>bv){bv=v;best={t:'claim',c,i};}}
+  return best;
+}
+function aiTurn(){
+  GAME.busy=true;renderTop();
+  const step=()=>{
+    if(GAME.over)return;
+    if(GAME.moves<=0){runBattles(()=>{GAME.busy=false;nextTurn();});return;}
+    const m=aiPick();
+    if(!m){GAME.moves=0;renderTop();return setTimeout(step,300);}
+    if(m.t==='claim'){claim(2,m.c,m.i);toastMove(2,m.c.children[m.i]);GAME.moves--;renderTop();}
+    else if(!queueContest(2,m.c)){GAME.moves--;renderTop();}   // queueContest spends the move
+    setTimeout(step,520);
+  };
+  setTimeout(step,650);
+}
+
+/* ---- battles: Risk-style, auto-resolved with a small dice animation ---- */
+const bEl=document.getElementById('battle');let bFast=false;
+bEl.addEventListener('click',()=>{bFast=true;});
+const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+const dieHTML=(v,p,cls='')=>`<span class="die ${cls}" style="--pc:${PC[p]}">${[...Array(9)].map((_,i)=>`<i${PIPS[v].includes(i)?' class="on"':''}></i>`).join('')}</span>`;
+function runBattles(done){
+  const list=GAME.queue.slice();GAME.queue=[];bFast=false;
+  const next=()=>{const b=list.shift();if(!b){bEl.classList.remove('on');GAME.battle=null;refresh();return setTimeout(done,bFast?60:250);}
+    const att=b.p,def=3-att;if(!cnt(b.c,att)||!cnt(b.c,def))return next();
+    battle(b.c,att,def,next);};
+  next();
+}
+function battle(c,att,def,done){
+  GAME.battle=c;refresh();bEl.classList.add('on');toast.classList.remove('on');
+  const T=k=>bFast?k*.2:k;
+  document.getElementById('bT').textContent=c.n;
+  document.getElementById('bS').innerHTML=`${FAM[c.fam].n} · <span style="color:${PC[att]}">${PN[att]}</span> ${att===1?'attack':'attacks'}`;
+  const rowA=document.getElementById('dA'),rowD=document.getElementById('dD');
+  const setCounts=()=>{document.getElementById('nA').textContent=cnt(c,1);document.getElementById('nD').textContent=cnt(c,2);};
+  setCounts();document.getElementById('bR').textContent='';
+  const lose=p=>{const idx=c.plots.map((v,i)=>v===p?i:-1).filter(i=>i>=0);c.plots[idx[Math.floor(Math.random()*idx.length)]]=0;};
+  const round=()=>{
+    const a=cnt(c,att),d=cnt(c,def);
+    if(!a||!d){const w=a?att:def;
+      document.getElementById('bR').innerHTML=`<b style="color:${PC[w]}">${PN[w]}</b> ${w===1?'hold':'holds'} ${c.n}`;
+      refresh();return setTimeout(done,T(900));}
+    const A=roll(Math.max(2,a)),D=roll(Math.max(2,d));
+    const rows={[att]:A,[def]:D};
+    let t=0;const flick=setInterval(()=>{               // tumble
+      rowA.innerHTML=rows[1].map(()=>dieHTML(1+Math.floor(Math.random()*6),1,'roll')).join('');
+      rowD.innerHTML=rows[2].map(()=>dieHTML(1+Math.floor(Math.random()*6),2,'roll')).join('');
+      if(++t>5){clearInterval(flick);settle();}},T(65));
+    const settle=()=>{
+      const n=Math.min(A.length,D.length),res={1:[],2:[]};let la=0,ld=0;
+      for(let k=0;k<n;k++){if(la>=a||ld>=d){res[att][k]=res[def][k]='';continue;}
+        if(A[k]>D[k]){ld++;res[att][k]='win';res[def][k]='lose';}else{la++;res[att][k]='lose';res[def][k]='win';}}
+      rowA.innerHTML=rows[1].map((v,k)=>dieHTML(v,1,res[1][k]||'idle')).join('');
+      rowD.innerHTML=rows[2].map((v,k)=>dieHTML(v,2,res[2][k]||'idle')).join('');
+      setTimeout(()=>{for(let k=0;k<la;k++)lose(att);for(let k=0;k<ld;k++)lose(def);setCounts();refresh();buzz(8);setTimeout(round,T(260));},T(620));
+    };
+  };
+  setTimeout(round,T(350));
+}
+
+function finish(winner){
+  GAME.over=true;GAME.busy=false;refresh();
+  const a=score(1),b=score(2),w=winner||(a>b?1:a<b?2:0);
+  document.getElementById('ovT').textContent=w===1?'Victory':w===2?'Defeat':'Draw';
+  const rg=p=>CATS.filter(c=>ctrl(c)===p).length;
+  document.getElementById('ovP').innerHTML=(winner?`${PN[3-winner]} ${winner===2?'have':'has'} no sites left<br>`:'')+`${a} – ${b}<br>Territories ${rg(1)} vs ${rg(2)} · Realms ${famCount(1)} vs ${famCount(2)}`;
+  document.getElementById('over').classList.add('on');
+}
+document.getElementById('ovB').onclick=newGame;
+document.getElementById('newGame').onclick=newGame;
+
+/* ================= Top bar / status ================= */
+function renderTop(){
+  document.getElementById('scYou').textContent=score(1);document.getElementById('scAi').textContent=score(2);
+  document.getElementById('spYou').classList.toggle('turn',GAME.turn===1&&!GAME.over);
+  document.getElementById('spAi').classList.toggle('turn',GAME.turn===2&&!GAME.over);
+  document.getElementById('round').textContent=`Round ${Math.min(GAME.round,GAME.max)}/${GAME.max}`;
+  document.getElementById('mv').innerHTML=[...Array(MOVES)].map((_,i)=>`<i class="${i<GAME.moves?'on':''}" style="--pc:${PC[GAME.turn]}"></i>`).join('');
+  const et=document.getElementById('endTurn');et.disabled=!(GAME.turn===1&&!GAME.over&&!GAME.busy);
+  const st=document.getElementById('status'),go=document.getElementById('go');
+  go.classList.toggle('wait',!myTurn());
+  const q=GAME.queue.length;
+  st.innerHTML=GAME.over?'<b>Game over</b> · start a new game to play again'
+    :GAME.battle?`<b style="color:#ffb347">Battle</b> · ${GAME.battle.n} · click the battle card to speed up`
+    :GAME.turn===1?(GAME.busy?'Resolving…':`<b style="color:var(--you)">Your turn</b> · ${GAME.moves} move${GAME.moves===1?'':'s'} left · claim open sites, or drop on an <span style="color:var(--ai)">AI site</span> to contest${q?` · ${q} battle${q>1?'s':''} queued`:''}`)
+    :`<b style="color:var(--ai)">AI is moving…</b>${q?` · ${q} battle${q>1?'s':''} queued`:''}`;
+}
+
+/* ================= Exploded 2D view: the whole hierarchy as a radial tree (pan & zoom) ================= */
+// World (center) → 8 realm hubs → 64 territories → every site. Links are parent→child; selecting a territory also draws its globe borders.
+const svg=document.getElementById('svg'),vp=document.getElementById('vp'),mapEl=document.getElementById('map');
+// Layout is the globe itself, flattened: realms are spokes, rings 1–8 are circles (ring 1 nearest the center), sites ring their territory.
+// Drawn links: hierarchy (World→realm→territory→site) as colored strands, and EVERY border of the game graph:
+//   along a spoke (ring r ↔ r±1), around a ring (neighboring realms), across the near pole (ring 1 ↔ opposite ring 1),
+//   and across the far side (ring 8 ↔ opposite ring 8). Sites have no links of their own in the current rules.
+const LY={RH:250,R1:430,DR:150,RP:54,POLE:300,FAR:1585,GAP:26,OUT:1800};
+const pol=(r,a)=>[+(Math.cos(a)*r).toFixed(1),+(Math.sin(a)*r).toFixed(1)];
+const ringR=r=>LY.R1+(r-1)*LY.DR;
+FAM.forEach((f,fi)=>{f.a=ORDER[fi]*45*D2R;[f.x,f.y]=pol(LY.RH,f.a);});
+CATS.forEach(c=>{c.a=c.step*45*D2R;c.r=ringR(c.ring);[c.x,c.y]=pol(c.r,c.a);const n=c.children.length;
+  c.children.forEach((lf,k)=>{const t=(-90+k*360/n)*D2R;lf.x=+(c.x+Math.cos(t)*LY.RP).toFixed(1);lf.y=+(c.y+Math.sin(t)*LY.RP).toFixed(1);});});
+const EDGES=[];CATS.forEach((c,i)=>c.nb.forEach(d=>{if(i<CATS.indexOf(d))EDGES.push([c,d]);}));   // 128 borders, each once
+function edgeInfo(c,d){
+  if(c.step===d.step)return{kind:'spoke',d:`M${c.x} ${c.y}L${d.x} ${d.y}`};
+  if((c.step-d.step+8)%8===4){                       // pole crossing: route as a half-circle through the pole region
+    const A=c.step<4?c:d,k=A.step,near=A.ring===1,r=(near?LY.POLE:LY.FAR)+k*LY.GAP,B=A===c?d:c;
+    return{kind:near?'near':'far',d:`M${A.x} ${A.y}L${pol(r,A.a)}A${r} ${r} 0 0 1 ${pol(r,A.a+Math.PI/2)}A${r} ${r} 0 0 1 ${pol(r,A.a+Math.PI)}L${B.x} ${B.y}`};}
+  const sw=(d.step-c.step+8)%8===1?1:0;return{kind:'ring',d:`M${c.x} ${c.y}A${c.r} ${c.r} 0 0 ${sw} ${d.x} ${d.y}`};
+}
+EDGES.forEach(e=>e.info=edgeInfo(e[0],e[1]));
+const strandD=(f,c)=>{const off=(4+c.ring*1.6)*D2R,p1=pol(LY.RH+(c.r-LY.RH)*.35,f.a+off),p2=pol(LY.RH+(c.r-LY.RH)*.78,f.a+off);
+  return`M${f.x} ${f.y}C${p1} ${p2} ${c.x} ${c.y}`;};
+const famOwner=fi=>[1,2].find(p=>{let k=0;for(const c of CATS)if(c.fam===fi&&ctrl(c)===p)k++;return k>=5})||0;
+
+let SEL=null; // {c, leaf} or {f}
+function renderMap(){
+  let grid='',hier='',borders='',nodes='',labels='';
+  // guides: ring circles + ring numbers, pole bands
+  for(let r=1;r<=K;r++){const R=ringR(r);grid+=`<circle r="${R}" fill="none" stroke="#ffffff07"/>`;
+    const[x,y]=pol(R,-67.5*D2R);grid+=`<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="700" fill="#ffffff30">R${r}</text>`;}
+  {const[x,y]=pol(LY.POLE-24,-67.5*D2R);grid+=`<text x="${x}" y="${y}" text-anchor="middle" font-size="12" letter-spacing="2" font-weight="700" fill="#ffffff40">NEAR POLE</text>`;
+   const[x2,y2]=pol(LY.FAR+4*LY.GAP+10,-67.5*D2R);grid+=`<text x="${x2}" y="${y2}" text-anchor="middle" font-size="12" letter-spacing="2" font-weight="700" fill="#ffffff40">FAR SIDE</text>`;}
+  // hierarchy strands
+  FAM.forEach((f,fi)=>{const own=famOwner(fi),sel=SEL&&SEL.f===f;
+    hier+=`<path d="M${pol(70,f.a)}L${f.x} ${f.y}" stroke="${own?PC[own]:f.c}" stroke-opacity=".6" stroke-width="2.5"/>`;
+    for(const c of CATS)if(c.fam===fi){const ct=ctrl(c),on=sel||(SEL&&SEL.c===c);
+      hier+=`<path d="${strandD(f,c)}" fill="none" stroke="${ct?PC[ct]:f.c}" stroke-opacity="${on?.95:ct?.5:.26}" stroke-width="${on?2.2:1.1}"/>`;}
+  });
+  CATS.forEach(c=>{const f=FAM[c.fam],on=SEL&&SEL.c===c;
+    c.children.forEach((lf,i)=>{const v=c.plots[i];
+      hier+=`<path d="M${c.x} ${c.y}L${lf.x} ${lf.y}" stroke="${v?PC[v]:f.c}" stroke-opacity="${on?.9:v?.6:.25}" stroke-width="${on?1.3:.8}"/>`;});});
+  // borders (the real game graph)
+  for(const e of EDGES){const[c,d]=e,{kind,d:path}=e.info,o1=ctrl(c),o2=ctrl(d),same=o1&&o1===o2;
+    const on=SEL&&(SEL.c===c||SEL.c===d),other=on?(SEL.c===c?d:c):null,rch=other&&REACH[1].has(other);
+    const col=on?(rch?PC[1]:'#e6edff'):same?PC[o1]:'#c8d3e8',op=on?.95:same?.75:.3,w=on?2.4:same?1.8:1.1;
+    borders+=`<path d="${path}" fill="none" stroke="${col}" stroke-opacity="${op}" stroke-width="${w}"${kind==='near'||kind==='far'?' stroke-dasharray="6 5"':''}/>`;}
+  // realm hubs + labels
+  FAM.forEach((f,fi)=>{const own=famOwner(fi),sel=SEL&&SEL.f===f;
+    let ty=0,ta=0;for(const c of CATS)if(c.fam===fi){const k=ctrl(c);if(k===1)ty++;else if(k===2)ta++;}
+    nodes+=`<g class="nd rh" data-f="${fi}" transform="translate(${f.x} ${f.y})"><title>${f.n}</title>
+      <circle r="36" fill="#111725" stroke="${sel?'#fff':own?PC[own]:f.c}" stroke-width="${own||sel?3:1.6}"/>
+      <path d="${sigilD(f.sig,17)}" fill="${f.c}" fill-rule="evenodd"/></g>`;
+    const[lx,ly]=pol(LY.OUT,f.a);
+    labels+=`<text x="${lx}" y="${ly-12}" text-anchor="middle" font-size="34" font-weight="720" letter-spacing="2" fill="${f.c}">${f.n.toUpperCase()}</text>
+      <text x="${lx}" y="${ly+24}" text-anchor="middle" font-size="19" fill="#8a93a8"><tspan fill="${PC[1]}">You ${ty}</tspan> · <tspan fill="${PC[2]}">AI ${ta}</tspan> · 5 of 8 to hold${own?` · <tspan fill="${PC[own]}" font-weight="700">${PN[own]} ${own===1?'hold':'holds'}</tspan>`:''}</text>`;});
+  // territories + their sites
+  const C=2*Math.PI*20;
+  CATS.forEach((c,ci)=>{
+    const f=FAM[c.fam],ct=ctrl(c),lk=locked(c),rch=GAME.turn===1&&!GAME.over&&REACH[1].has(c);
+    const sel=SEL&&SEL.c===c,nb=SEL&&SEL.c&&SEL.c.nb.includes(c);
+    c.children.forEach((lf,i)=>{const v=c.plots[i],isSel=SEL&&SEL.leaf===lf,last=GAME.last&&GAME.last.c===c&&GAME.last.i===i;
+      nodes+=`<g class="nd lf" data-l="${ci}.${i}" transform="translate(${lf.x} ${lf.y})"><title>${lf.n} — ${c.n}${v?' · held by '+PN[v]:' · unclaimed'}</title>`+
+        (last?`<circle r="9" fill="none" stroke="${PC[GAME.last.p]}" stroke-width="2"><animate attributeName="r" values="9;30" dur="1.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur="1.5s" repeatCount="indefinite"/></circle>`:'')+
+        `<circle r="9.5" fill="${v?PC[v]:'#161c2a'}" stroke="${isSel?'#fff':v?PC[v]:f.c+'80'}" stroke-width="${isSel?2.2:1}"/>`+
+        `<text class="ll" text-anchor="middle" dominant-baseline="central" font-size="7.5" font-weight="700" fill="${v?'#fff':'#c3cbdb'}">${lf.e}</text></g>`;});
+    nodes+=`<g class="nd tr" data-t="${ci}" transform="translate(${c.x} ${c.y})"><title>${c.n} — ${f.n} · ring ${c.ring}</title>`+
+      (GAME.battle===c?`<circle r="30" fill="none" stroke="#ffb347" stroke-width="3"><animate attributeName="r" values="24;40" dur=".8s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur=".8s" repeatCount="indefinite"/></circle>`:'')+
+      (queued(c)&&GAME.battle!==c?`<circle r="31" fill="none" stroke="#ffb347" stroke-width="2" stroke-dasharray="5 4"><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="6s" repeatCount="indefinite"/></circle>`:'')+
+      (rch?`<circle r="27" fill="none" stroke="${PC[1]}" stroke-width="1.5" stroke-dasharray="3 4"><animate attributeName="stroke-opacity" values=".2;.9;.2" dur="2.2s" repeatCount="indefinite"/></circle>`:'')+
+      `<circle r="20" fill="#0d111b" stroke="#ffffff14" stroke-width="3.5"/>`+
+      (cnt(c,1)?`<circle r="20" fill="none" stroke="${PC[1]}" stroke-width="3.5" stroke-dasharray="${(cnt(c,1)/c.plots.length*C).toFixed(1)} ${C}" transform="rotate(-90)"/>`:'')+
+      (cnt(c,2)?`<circle r="20" fill="none" stroke="${PC[2]}" stroke-width="3.5" stroke-dasharray="${(cnt(c,2)/c.plots.length*C).toFixed(1)} ${C}" stroke-dashoffset="${(-cnt(c,1)/c.plots.length*C).toFixed(1)}" transform="rotate(-90)"/>`:'')+
+      `<circle r="15" fill="${ct?PC[ct]+(lk?'dd':'4a'):'#141a28'}" stroke="${sel?'#fff':nb?'#d6e4ff':f.c}" stroke-width="${sel?2.4:nb?2:1.2}"/>`+
+      `<text text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="750" fill="#eef2f8">${c.e}</text></g>`;
+    labels+=`<text class="tl" x="${c.x}" y="${c.y+LY.RP+20}" text-anchor="middle" font-size="12" font-weight="${sel?700:600}" fill="${sel?'#fff':ct?PC[ct]:'#a3acbf'}">${c.n}${cnt(c,1)&&cnt(c,2)?' · contested':lk?' · full':''}</text>`;
+  });
+  vp.innerHTML=`<g>${grid}</g><g>${hier}</g><g>${borders}</g><g>${nodes}</g><g pointer-events="none">${labels}</g>`;
+}
+
+/* ---- pan / zoom / pinch ---- */
+const VP={s:1,tx:0,ty:0,min:.2};
+function fitTarget(){const W=innerWidth,H=innerHeight,s=Math.min((W-16)/2/(LY.OUT+260),(H-150)/2/(LY.OUT+60));return{s,tx:W/2,ty:GEO.cy};}
+function applyVP(){vp.setAttribute('transform',`translate(${VP.tx.toFixed(1)} ${VP.ty.toFixed(1)}) scale(${VP.s.toFixed(4)})`);
+  const z=VP.s<.45?'z0':VP.s<1.2?'z1':'z2';if(svg.dataset.z!==z){svg.setAttribute('class',z);svg.dataset.z=z;}}
+function fitView(anim){const t=fitTarget();VP.min=t.s*.6;anim?animVP(t):(Object.assign(VP,t),applyVP());}
+function zoomAt(f,x,y){const s=clamp(VP.s*f,VP.min,4.5),k=s/VP.s;VP.tx=x-(x-VP.tx)*k;VP.ty=y-(y-VP.ty)*k;VP.s=s;applyVP();}
+let vpAnim=0;
+function animVP(t){cancelAnimationFrame(vpAnim);const f={...VP},t0=performance.now();
+  const step=now=>{const k=Math.min(1,(now-t0)/380),e=1-Math.pow(1-k,3);
+    VP.s=f.s+(t.s-f.s)*e;VP.tx=f.tx+(t.tx-f.tx)*e;VP.ty=f.ty+(t.ty-f.ty)*e;applyVP();if(k<1)vpAnim=requestAnimationFrame(step);};
+  vpAnim=requestAnimationFrame(step);}
+function zoomTo(s,wx,wy){const W=innerWidth;s=clamp(s,VP.min,4.5);animVP({s,tx:W/2-wx*s,ty:GEO.cy-wy*s});}
+const ptrs=new Map();let moved=false,pinch=null,downT=null;
+svg.addEventListener('pointerdown',e=>{try{svg.setPointerCapture(e.pointerId)}catch(_){}
+  ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});if(ptrs.size===1){moved=false;downT=e.target;}
+  if(ptrs.size===2){const[a,b]=[...ptrs.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y)||1,s:VP.s};moved=true;}
+  cancelAnimationFrame(vpAnim);});
+svg.addEventListener('pointermove',e=>{const p=ptrs.get(e.pointerId);if(!p)return;
+  const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;
+  if(ptrs.size===1){if(Math.abs(dx)+Math.abs(dy)>0){VP.tx+=dx;VP.ty+=dy;applyVP();}
+    if(!moved){const s=[...ptrs.values()][0];moved=Math.hypot(e.clientX-s.x0,e.clientY-s.y0)>5;}}
+  else if(pinch){const[a,b]=[...ptrs.values()],d=Math.hypot(a.x-b.x,a.y-b.y);zoomAt(pinch.s*d/pinch.d/VP.s,(a.x+b.x)/2,(a.y+b.y)/2);}});
+svg.addEventListener('pointerdown',e=>{const p=ptrs.get(e.pointerId);if(p){p.x0=e.clientX;p.y0=e.clientY;}});
+const vpUp=e=>{if(!ptrs.has(e.pointerId))return;ptrs.delete(e.pointerId);if(ptrs.size<2)pinch=null;
+  if(e.type==='pointerup'&&!ptrs.size&&!moved)tapMap(downT);};
+svg.addEventListener('pointerup',vpUp);svg.addEventListener('pointercancel',vpUp);
+svg.addEventListener('wheel',e=>{e.preventDefault();cancelAnimationFrame(vpAnim);zoomAt(Math.exp(-e.deltaY*.0016),e.clientX,e.clientY);},{passive:false});
+svg.addEventListener('dblclick',e=>{const s=VP.s*2,wx=(e.clientX-VP.tx)/VP.s,wy=(e.clientY-VP.ty)/VP.s;zoomTo(s,wx,wy);});
+document.getElementById('mapui').addEventListener('click',e=>{const z=e.target.closest('button');if(!z)return;
+  const wx=(innerWidth/2-VP.tx)/VP.s,wy=(GEO.cy-VP.ty)/VP.s;
+  if(z.dataset.z==='in')zoomTo(VP.s*1.6,wx,wy);else if(z.dataset.z==='out')zoomTo(VP.s/1.6,wx,wy);else fitView(true);});
+
+function tapMap(t){
+  const g=t&&t.closest&&t.closest('.nd');if(!g){hideInfo();return;}
+  if(g.dataset.t!=null)showInfo(CATS[+g.dataset.t]);
+  else if(g.dataset.l){const[ci,i]=g.dataset.l.split('.').map(Number);showInfo(CATS[ci],CATS[ci].children[i]);}
+  else if(g.dataset.f!=null)showRealm(FAM[+g.dataset.f]);
+}
+const badge=(txt,c,solid)=>`<span class="bd" style="background:${solid?c:c+'22'};box-shadow:inset 0 0 0 1.5px ${c};color:${solid?'#fff':c}">${txt}</span>`;
+function showInfo(c,leaf){
+  SEL={c,leaf};renderMap();const n=c.plots.length,a=cnt(c,1),b=cnt(c,2),ct=ctrl(c),lk=locked(c),f=FAM[c.fam];
+  const el=document.getElementById('info');let h;
+  if(leaf){const v=c.plots[leaf.i],ok=canSettle(c,leaf.i);
+    h=badge(leaf.e,v?PC[v]:f.c,!!v)+`<div><b>${leaf.n}</b><small>${c.n} · ${f.n} · ${v?`held by <span style="color:${PC[v]}">${PN[v]}</span>`:ok?'<span style="color:var(--you)">open to settle now</span>':lk?'territory full':'unclaimed · out of reach'}</small></div>`;}
+  else{const st=queued(c)?'battle queued':a&&b?'contested':ct?`${PN[ct]} ${ct===1?'lead':'leads'}`:REACH[1].has(c)?'in your reach':'out of reach';
+    h=badge(c.e,ct?PC[ct]:f.c,ct&&lk)+`<div><b>${c.n}</b><small>${f.n} · <span style="color:var(--you)">You ${a}</span> · <span style="color:var(--ai)">AI ${b}</span> · ${n} sites · ${st} · ${c.nb.length} borders</small></div>`;}
+  const cc=canContest(1,c)&&!GAME.busy;
+  el.innerHTML=h+(cc?`<button id="contestHere" style="background:#7a4a14">Contest · ${Math.max(2,a)} vs ${Math.max(2,b)} dice</button>`:queued(c)?`<button disabled style="opacity:.6">Battle queued</button>`:'')+`<button id="openHere">Open ›</button>`;el.classList.add('on');
+  if(cc)document.getElementById('contestHere').onclick=()=>queueContest(1,c);
+  document.getElementById('openHere').onclick=()=>{hideInfo();if(stack.length)return;openRoot();const L=stack[0];pushChild(L,L.grid[c.step][c.ring]);
+    if(leaf){const C=stack[1],it=C.items.find(x=>x.ref===leaf);if(it)C.qt=qFace(it.ring*SIG,it.step*45);}};
+}
+function showRealm(f){
+  SEL={f};renderMap();const fi=FAM.indexOf(f);let a=0,b=0;for(const c of CATS)if(c.fam===fi){const k=ctrl(c);if(k===1)a++;else if(k===2)b++;}
+  const own=famOwner(fi),el=document.getElementById('info');
+  el.innerHTML=`<span class="bd sg" style="box-shadow:inset 0 0 0 1.5px ${f.c}"><svg viewBox="-20 -20 40 40" width="24" height="24"><path d="${sigilD(f.sig,16)}" fill="${f.c}" fill-rule="evenodd"/></svg></span><div><b>${f.n}</b><small>8 territories · <span style="color:var(--you)">You lead ${a}</span> · <span style="color:var(--ai)">AI leads ${b}</span> · ${own?`held by ${PN[own]} (+5)`:'control 5 to hold it (+5)'}</small></div>`;
+  el.classList.add('on');
+}
+function hideInfo(){const had=SEL;SEL=null;document.getElementById('info').classList.remove('on');if(had)renderMap();}
+document.getElementById('tgMap').onclick=e=>{const on=!mapEl.classList.toggle('off');e.currentTarget.classList.toggle('on',on);if(!on)hideInfo();};
+
+/* ================= Globe engine ================= */
+const qAxis=(x,y,z,a)=>{const s=Math.sin(a/2);return[Math.cos(a/2),x*s,y*s,z*s]};
+function qRot(q,v){const[w,x,y,z]=q,[a,b,c]=v;const tx=2*(y*c-z*b),ty=2*(z*a-x*c),tz=2*(x*b-y*a);
+  return[a+w*tx+(y*tz-z*ty),b+w*ty+(z*tx-x*tz),c+w*tz+(x*ty-y*tx)];}
+function qSlerp(a,b,t){let d=a[0]*b[0]+a[1]*b[1]+a[2]*b[2]+a[3]*b[3];if(d<0){b=b.map(v=>-v);d=-d}
+  if(d>.9995){const r=a.map((v,i)=>v+(b[i]-v)*t),n=Math.hypot(...r);return r.map(v=>v/n)}
+  const th=Math.acos(d),s=Math.sin(th),wa=Math.sin((1-t)*th)/s,wb=Math.sin(t*th)/s;return a.map((v,i)=>v*wa+b[i]*wb);}
+const qFace=(al,ph)=>{const p=ph*D2R;return qAxis(-Math.sin(p),Math.cos(p),0,-al*D2R)};
+const sph=(al,ph)=>{al*=D2R;ph*=D2R;return[Math.sin(al)*Math.cos(ph),Math.sin(al)*Math.sin(ph),Math.cos(al)]};
+const stepOf=a=>((Math.round(a/45)%8)+8)%8;
+
+const layersEl=document.getElementById('layers'),stage=document.getElementById('stage'),scrim=document.getElementById('scrim'),crumbs=document.getElementById('crumbs');
+let dpr=1;const GEO={};let stack=[],dying=[];
+function resize(){
+  dpr=Math.min(devicePixelRatio||1,2);const W=innerWidth,H=innerHeight,m=Math.min(W,H);
+  GEO.R=clamp(m*.33,118,235);GEO.cx=W/2;
+  const lo=GEO.R+78,hi=H-GEO.R-96;GEO.cy=lo>hi?H/2:clamp(H*.5,lo,hi);
+  GEO.pps=clamp(m*.085,28,50);
+  const dock=document.getElementById('dock');dock.style.left=GEO.cx+'px';dock.style.top=GEO.cy+'px';
+  const bs=clamp(m*.14,56,108),go=document.getElementById('go');
+  Object.assign(go.style,{width:bs+'px',height:bs+'px',left:-bs/2+'px',top:-bs/2+'px'});
+  go.querySelector('.ic').style.fontSize=bs*.3+'px';go.querySelector('.lb').style.display=bs<96?'none':'';
+  mapEl.style.transformOrigin=`${GEO.cx}px ${GEO.cy}px`;
+  for(const L of[...stack,...dying]){L.cv.width=W*dpr;L.cv.height=H*dpr;L.dirty=true;}
+  SPR.clear();restyle();renderMap();fitView(false);kick();
+}
+
+function makeLevel(node,depth){
+  const grid=[...Array(8)].map(()=>Array(K+1).fill(null)),items=[];
+  node.children.forEach((ch,i)=>{
+    const step=node.root?ch.step:ORDER[i%8],ring=node.root?ch.ring:Math.floor(i/8)+1;if(ring>K)return;
+    const it={ref:ch,e:ch.e,n:ch.n,c:ch.c,step,ring,hl:0,p:sph(ring*SIG,step*45)};grid[step][ring]=it;items.push(it);});
+  const center={center:true,e:'✕',c:'#9aa6bf',hl:0,p:[0,0,1]},back={back:true,e:'↩',c:'#9aa6bf',hl:0,p:[0,0,-1]};
+  const cv=document.createElement('canvas');cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;
+  cv.style.filter='blur(0px) saturate(1) brightness(1)';cv.style.opacity='1';cv.style.transform='scale(1)';layersEl.appendChild(cv);
+  return{node,depth,items,grid,center,back,all:[center,back,...items],cv,ctx:cv.getContext('2d',{desynchronized:true}),dirty:true,
+    q:[1,0,0,0],qt:[1,0,0,0],e:0,ev:0,from:depth?0.1:0.72,alive:true,chosen:null};
+}
+function restyle(){const top=stack.length-1;
+  stack.forEach((L,i)=>{const d=top-i,s=L.cv.style;s.transformOrigin=`${GEO.cx}px ${GEO.cy}px`;
+    if(d===0){s.filter='blur(0px) saturate(1) brightness(1)';s.opacity='1';s.transform='scale(1)';}
+    else{s.filter=`blur(${5+5*d}px) saturate(.6) brightness(.75)`;s.opacity=d===1?'.42':'.16';s.transform=`scale(${1+.34*d})`;}});}
+function renderCrumbs(){
+  if(!stack.length){crumbs.classList.remove('on');return;}
+  let h=`<button class="back" data-to="${stack.length-2}" aria-label="Back">‹</button>`;
+  stack.forEach((L,i)=>{if(i)h+=`<span class="sep">›</span>`;h+=`<button data-to="${i}" class="${i===stack.length-1?'cur':''}"><i style="background:${L.node.c}"></i>${L.node.n}</button>`;});
+  crumbs.innerHTML=h;crumbs.classList.add('on');}
+crumbs.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  let to=+b.dataset.to;if(to>=stack.length-1)to=stack.length-2;navBack(stack.length-1-to);});
+
+let HIST=true,skipPops=0;
+function hPush(d){if(!HIST)return;try{history.pushState({gw:d},'')}catch(_){HIST=false}}
+function navBack(n=1){if(!stack.length)return;n=Math.min(n,stack.length);popTo(stack.length-1-n);
+  if(HIST){skipPops++;try{history.go(-n)}catch(_){skipPops--;HIST=false}}}
+addEventListener('popstate',e=>{const t=e.state&&e.state.gw!=null?e.state.gw:-1;if(skipPops>0){skipPops--;return;}popTo(t);});
+function popTo(t){
+  if(t>=stack.length-1&&t>=0)return;if(G.active)endDrag(null,true);
+  if(t<0){if(stack.length)closeAll(false);return;}
+  while(stack.length-1>t){const L=stack.pop();L.alive=false;dying.push(L);}
+  const top=stack[stack.length-1];top.chosen=null;top.qt=[1,0,0,0];restyle();renderCrumbs();buzz(8);kick();}
+function openRoot(){const L=makeLevel(ROOT,0);stack=[L];hPush(0);scrim.classList.add('on');stage.classList.add('on');restyle();renderCrumbs();kick();}
+function pushChild(L,it){L.chosen=it;L.qt=qFace(it.ring*SIG,it.step*45);
+  const C=makeLevel(it.ref,L.depth+1);stack.push(C);hPush(C.depth);restyle();renderCrumbs();buzz([6,30,10]);kick();}
+function closeAll(viaUI){
+  if(viaUI&&HIST&&stack.length){skipPops++;try{history.go(-stack.length)}catch(_){skipPops--;HIST=false}}
+  for(const L of stack){L.alive=false;L.cv.style.opacity='0';dying.push(L);}
+  stack=[];scrim.classList.remove('on');stage.classList.remove('on');renderCrumbs();kick();}
+
+/* ---- gesture ---- */
+const G={active:false,pop:0};
+function beginDrag(e,fresh){const L=stack[stack.length-1];if(!L)return;
+  try{stage.setPointerCapture(e.pointerId)}catch(_){}
+  Object.assign(G,{active:true,L,pid:e.pointerId,ox:e.clientX,oy:e.clientY,px:e.clientX,py:e.clientY,dist:0,moved:false,
+    sector:-1,slot:0,item:L.center,laps:0,fresh,inside:Math.hypot(e.clientX-GEO.cx,e.clientY-GEO.cy)<GEO.R*1.14});kick();}
+document.getElementById('go').addEventListener('pointerdown',e=>{
+  if(e.button>0||stack.length||GAME.turn!==1||GAME.over||GAME.busy)return;e.preventDefault();hideInfo();openRoot();beginDrag(e,true);});
+stage.addEventListener('pointerdown',e=>{if(e.button>0||G.active||!stack.length)return;e.preventDefault();beginDrag(e,false);});
+const onMove=e=>{
+  if(!G.active||e.pointerId!==G.pid)return;
+  const L=G.L;G.px=e.clientX;G.py=e.clientY;
+  const dx=G.px-G.ox,dy=G.py-G.oy,dist=Math.hypot(dx,dy);G.dist=dist;if(dist>9)G.moved=true;
+  if(dist<9){setSel(L.center,0);L.qt=[1,0,0,0];return;}
+  const ang=Math.atan2(dy,dx)/D2R,step=stepOf(ang);
+  if(G.sector<0||dist<26)G.sector=step;else{const d=((ang-G.sector*45)%360+540)%360-180;if(Math.abs(d)>31)G.sector=step;}
+  const alpha=dist/GEO.pps*SIG,raw=Math.round(alpha/SIG);G.laps=Math.floor(raw/M);
+  const slot=raw%M,s=G.sector,o=(s+4)%8;
+  setSel(slot===0?L.center:slot<=K?L.grid[s][slot]:slot===K+1?L.back:L.grid[o][M-slot],slot);
+  const snapped=raw*SIG;L.qt=qFace(snapped+(alpha-snapped)*.45,s*45);
+};
+addEventListener('onpointerrawupdate' in window?'pointerrawupdate':'pointermove',onMove,{passive:true});
+function setSel(it,slot){if(it!==G.item){buzz(5);G.pop=1;}G.item=it;G.slot=slot;}
+addEventListener('pointerup',e=>endDrag(e,false));
+addEventListener('pointercancel',e=>endDrag(e,true));
+function endDrag(e,cancel){
+  if(!G.active||(e&&e.pointerId!==G.pid))return;
+  G.active=false;const L=G.L,it=G.item;
+  if(cancel||!L.alive){L.qt=[1,0,0,0];return;}
+  if(!G.moved){if(!G.inside&&!G.fresh)navBack(1);else L.qt=[1,0,0,0];kick();return;}
+  if(!it||it.center){if(G.fresh&&L.depth===0)closeAll(true);else L.qt=[1,0,0,0];}
+  else if(it.back)navBack(1);
+  else if(it.ref.children)pushChild(L,it);
+  else{const c=it.ref.parent,i=it.ref.i;
+    if(canSettle(c,i)){playerSettled(it.ref);L.qt=[1,0,0,0];}
+    else if(c.plots[i]===2&&canContest(1,c)&&!GAME.busy){queueContest(1,c);L.qt=[1,0,0,0];}
+    else{buzz([25,40,25]);L.qt=[1,0,0,0];G.reject=1;}}
+  kick();
+}
+addEventListener('keydown',e=>{if((e.key==='Escape'||e.key==='Backspace')&&stack.length){e.preventDefault();navBack(1);}});
+addEventListener('contextmenu',e=>{e.preventDefault();if(stack.length&&!G.active)navBack(1);});
+function buzz(p){try{navigator.vibrate&&navigator.vibrate(p)}catch(_){}}
+
+/* ---- render ---- */
+let raf=0,last=0;G.reject=0;
+function kick(){if(!raf){last=0;raf=requestAnimationFrame(loop);}}
+function loop(t){
+  const dt=Math.min(.05,last?(t-last)/1000:.016);last=t;
+  const top=stack[stack.length-1];let busy=G.active||G.reject>.01;
+  for(const L of[...stack,...dying]){
+    const dragging=G.active&&G.L===L;
+    const d=Math.abs(L.q[0]*L.qt[0]+L.q[1]*L.qt[1]+L.q[2]*L.qt[2]+L.q[3]*L.qt[3]);
+    let ch=dragging||L.dirty||L.wasTop!==(L===top);
+    if(d<.9999995){L.q=qSlerp(L.q,L.qt,1-Math.exp(-dt*(dragging?40:10)));ch=true;}else L.q=L.qt;
+    if(L.alive){if(Math.abs(1-L.e)>4e-4||Math.abs(L.ev)>4e-4){L.ev+=((1-L.e)*300-L.ev*23)*dt;L.e+=L.ev*dt;ch=true;}else{L.e=1;L.ev=0;}}
+    else{L.e*=Math.exp(-dt*13);ch=true;}
+    const k=1-Math.exp(-dt*28),sel=dragging?G.item:null;
+    for(const it of L.all){const tg=(it===sel||it===L.chosen)?1:0,dh=tg-it.hl;if(Math.abs(dh)>.002){it.hl+=dh*k;ch=true;}else it.hl=tg;}
+    if(L===top&&(G.pop>.003||G.reject>.01))ch=true;
+    if(ch){drawLevel(L,L===top);L.dirty=false;L.wasTop=(L===top);busy=true;}
+  }
+  G.pop=G.pop>.003?G.pop*Math.exp(-dt*12):0;G.reject=G.reject>.01?G.reject*Math.exp(-dt*7):0;
+  dying=dying.filter(L=>{if(L.e<.008){L.cv.remove();return false}return true});
+  if((stack.length||dying.length)&&busy)raf=requestAnimationFrame(loop);else raf=0;
+}
+const SPR=new Map();
+function emojiSprite(e,px,font){
+  const b=Math.max(8,Math.ceil(px*dpr/6)*6),key=e+'|'+b+'|'+(font||'');let c=SPR.get(key);if(c)return c;
+  if(SPR.size>2000)SPR.clear();
+  c=document.createElement('canvas');const s=Math.ceil(b*1.35);c.width=c.height=s;const x=c.getContext('2d');
+  x.font=font?`600 ${b}px ${UI}`:`${b}px ${EMOJI}`;x.textAlign='center';x.textBaseline='middle';x.fillStyle=font||'#fff';
+  x.fillText(e,s/2,s/2+b*.06);c._k=s/b;SPR.set(key,c);return c;}
+function blit(ctx,spr,px,x,y){const w=px*spr._k;ctx.drawImage(spr,x-w/2,y-w/2,w,w);}
+function curve(ctx,L,gen,n,col,lw,fa,ba,A){
+  const{cx,cy,R}=GEO,pts=[];for(let i=0;i<=n;i++)pts.push(qRot(L.q,gen(i/n)));
+  for(const front of[false,true]){ctx.beginPath();let pen=false;
+    for(let i=1;i<pts.length;i++){const a=pts[i-1],b=pts[i];
+      if((a[2]+b[2]>0)===front){if(!pen){ctx.moveTo(cx+a[0]*R,cy+a[1]*R);pen=true}ctx.lineTo(cx+b[0]*R,cy+b[1]*R)}else pen=false;}
+    ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.globalAlpha=A*(front?fa:ba);ctx.stroke();}}
+
+// game state of a globe item → how it should look
+function look(L,it){
+  if(it.center||it.back)return{ok:true,c:it.c};
+  if(L.node.root){const c=it.ref,r=GAME.turn===1&&!GAME.over&&REACH[1].has(c);return{ok:true,reach:r,dim:!r&&!ctrl(c),c:it.c};}
+  const c=it.ref.parent,v=c.plots[it.ref.i],ok=canSettle(c,it.ref.i);
+  if(v===2&&canContest(1,c)&&!GAME.busy)return{ok:true,owner:v,contest:true,c:'#ffb347'};
+  return{ok,owner:v,dim:!ok&&!v,c:ok?PC[1]:v?PC[v]:'#5d667b'};
+}
+
+function drawLevel(L,isTop){
+  const ctx=L.ctx,W=innerWidth,H=innerHeight;
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+  const A=clamp(L.e*1.5,0,1);if(A<.003)return;
+  const{cx,cy,R}=GEO,sc=L.from+(1-L.from)*L.e;
+  const dragging=isTop&&G.active&&G.L===L&&L.alive,sel=dragging?G.item:null;
+  const selItem=sel&&sel.ref?sel:null,selLook=selItem?look(L,selItem):null;
+  const tint=selLook?selLook.c:(L.node.c||'#7cc4ff');
+  const selFam=L.node.root&&selItem?FAM[selItem.ref.fam]:null;
+  const shake=isTop?Math.sin(G.reject*40)*G.reject*10:0;
+
+  if(dragging){ctx.globalAlpha=A*.45;ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.setLineDash([3,6]);
+    ctx.beginPath();ctx.moveTo(G.ox,G.oy);ctx.lineTo(G.px,G.py);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(G.ox,G.oy,3,0,TAU);ctx.fill();}
+  ctx.save();ctx.translate(cx+shake,cy);ctx.scale(sc,sc);ctx.translate(-cx,-cy);
+
+  ctx.globalAlpha=A;
+  const gl=ctx.createRadialGradient(cx,cy,R*.9,cx,cy,R*1.3);gl.addColorStop(0,tint+'50');gl.addColorStop(1,tint+'00');
+  ctx.fillStyle=gl;ctx.beginPath();ctx.arc(cx,cy,R*1.3,0,TAU);ctx.fill();
+  const g=ctx.createRadialGradient(cx-R*.35,cy-R*.42,R*.05,cx,cy,R);
+  g.addColorStop(0,'#2d3956');g.addColorStop(.65,'#151b2b');g.addColorStop(1,'#0a0e17');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.fill();
+  if(!L.node.root){ctx.globalAlpha=A*.10;const g2=ctx.createRadialGradient(cx,cy,R*.2,cx,cy,R);
+    g2.addColorStop(0,L.node.c);g2.addColorStop(1,'transparent');ctx.fillStyle=g2;ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.fill();}
+  ctx.globalAlpha=A*.5;ctx.strokeStyle=L.node.root?'rgba(170,205,255,.45)':L.node.c+'88';ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.stroke();
+
+  {const fp=new Path2D(),bp=new Path2D(),act=dragging&&G.dist>=9?G.sector%4:-1;
+    const add=(gen,n)=>{let pa=qRot(L.q,gen(0));for(let i=1;i<=n;i++){const pb=qRot(L.q,gen(i/n)),P=(pa[2]+pb[2]>0)?fp:bp;
+        P.moveTo(cx+pa[0]*R,cy+pa[1]*R);P.lineTo(cx+pb[0]*R,cy+pb[1]*R);pa=pb;}};
+    for(let k=1;k<=K;k++){const a=k*SIG*D2R,s=Math.sin(a),c=Math.cos(a);add(t=>[s*Math.cos(t*TAU),s*Math.sin(t*TAU),c],48);}
+    for(let m=0;m<4;m++){if(m===act)continue;const ph=m*45*D2R,cp=Math.cos(ph),sp=Math.sin(ph);add(t=>{const s=t*TAU;return[Math.sin(s)*cp,Math.sin(s)*sp,Math.cos(s)]},64);}
+    ctx.strokeStyle='#aac8ff';ctx.lineWidth=1;ctx.globalAlpha=A*.11;ctx.stroke(fp);ctx.globalAlpha=A*.03;ctx.stroke(bp);
+    if(act>=0){const ph=act*45*D2R,cp=Math.cos(ph),sp=Math.sin(ph);curve(ctx,L,t=>{const s=t*TAU;return[Math.sin(s)*cp,Math.sin(s)*sp,Math.cos(s)]},96,tint,2,.75,.14,A);}}
+
+  ctx.globalAlpha=A*.32;ctx.strokeStyle='#fff';ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(cx,cy,R*.13,0,TAU);ctx.stroke();
+
+  const vis=[];for(const it of L.all){const r=qRot(L.q,it.p);if(r[2]>-.15)vis.push({it,r});}
+  vis.sort((a,b)=>a.r[2]-b.r[2]);
+  for(const{it,r}of vis){
+    const z=r[2],fade=clamp((z+.15)/.5,0,1),hl=it.hl,lk=look(L,it);
+    const base=R*.098*(.45+.55*Math.max(z,0)),rad=base*(1+.42*hl+.15*hl*G.pop);
+    const len=Math.hypot(r[0],r[1]),ux=len>1e-4?r[0]/len:0,uy=len>1e-4?r[1]/len:0,k=(.3+.7*Math.max(z,0))-1;
+    ctx.save();ctx.translate(cx+r[0]*R,cy+r[1]*R);ctx.transform(1+k*ux*ux,k*ux*uy,k*ux*uy,1+k*uy*uy,0,0);
+    const dim=(lk.dim?.42:1)*((dragging&&hl<.5)?.85:1),a0=A*fade*dim;ctx.globalAlpha=a0;
+    const hc=lk.c;
+    if(hl>.02){const h=ctx.createRadialGradient(0,0,rad*.7,0,0,rad*2);h.addColorStop(0,hc+'aa');h.addColorStop(1,hc+'00');
+      ctx.globalAlpha=A*fade*hl;ctx.fillStyle=h;ctx.beginPath();ctx.arc(0,0,rad*2,0,TAU);ctx.fill();ctx.globalAlpha=a0;}
+    ctx.beginPath();ctx.arc(0,0,rad,0,TAU);ctx.fillStyle=it.c+'22';ctx.fill();
+    if(lk.owner){ctx.fillStyle=PC[lk.owner];ctx.globalAlpha=A*fade*.85;ctx.fill();ctx.globalAlpha=a0;}
+    if(L.node.root&&it.ref){const c=it.ref,ct=ctrl(c);if(ct){ctx.fillStyle=PC[ct];ctx.globalAlpha=a0*(locked(c)?.7:.38);ctx.fill();ctx.globalAlpha=a0;}}
+    if(hl>.02){ctx.globalAlpha=A*fade*hl;ctx.fillStyle=hc;ctx.fill();ctx.globalAlpha=a0;}
+    ctx.lineWidth=1.3;ctx.strokeStyle=(lk.reach||lk.ok&&!L.node.root&&!it.center&&!it.back)?PC[1]+'cc':it.c+(hl>.5?'ff':'70');ctx.stroke();
+    if(L.node.root&&it.ref){ // ownership arc: blue share then red share of the territory's plots
+      const c=it.ref,n=c.plots.length,a=cnt(c,1)/n,b=cnt(c,2)/n,lw=Math.max(1.6,rad*.17),rr=rad+lw*.9;
+      ctx.lineWidth=lw;ctx.lineCap='round';ctx.globalAlpha=a0;
+      if(a){ctx.strokeStyle=PC[1];ctx.beginPath();ctx.arc(0,0,rr,-Math.PI/2,-Math.PI/2+a*TAU);ctx.stroke();}
+      if(b){ctx.strokeStyle=PC[2];ctx.beginPath();ctx.arc(0,0,rr,-Math.PI/2+a*TAU,-Math.PI/2+(a+b)*TAU);ctx.stroke();}
+      ctx.lineCap='butt';}
+    ctx.globalAlpha=a0;
+    if(it.center||it.back)blit(ctx,emojiSprite(it.e,rad*.9,hl>.5?'#0a0e17':'#c9d2e6'),rad*.9,0,0);
+    else{const fs=rad*(it.e.length>1?.74:.9),col=hl>.5?'#0b0f18':lk.owner?'#ffffff':'#dfe6f3';blit(ctx,emojiSprite(it.e,fs,col),fs,0,0);}
+    ctx.restore();
+  }
+  if(L.node.root){ctx.textAlign='center';ctx.textBaseline='middle';
+    FAM.forEach((f,fi)=>{const a=ORDER[fi]*45*D2R,on=selFam===f,r0=R+25,x=cx+Math.cos(a)*r0,y=cy+Math.sin(a)*r0,rad=on?16:11.5;
+      ctx.globalAlpha=A*(on?1:.5);ctx.beginPath();ctx.arc(x,y,rad,0,TAU);ctx.fillStyle=on?f.c:'#181e2d';ctx.fill();
+      ctx.lineWidth=1.2;ctx.strokeStyle=f.c+(on?'ff':'66');ctx.stroke();ctx.save();ctx.translate(x,y);ctx.fillStyle=on?'#0b0f18':f.c;ctx.fill(sigP(f.sig,rad*.56),'evenodd');ctx.restore();});}
+  ctx.restore();
+  if(isTop&&L.alive)drawPill(L,dragging,sel,A);
+  if(dragging){ctx.globalAlpha=A;ctx.fillStyle=selLook?selLook.c:'#fff';ctx.beginPath();ctx.arc(G.px,G.py,6,0,TAU);ctx.fill();
+    ctx.strokeStyle='#0a0e17';ctx.lineWidth=2;ctx.stroke();}
+  ctx.globalAlpha=1;
+}
+
+function drawPill(L,dragging,sel,A){
+  const ctx=L.ctx,{cx,cy,R}=GEO,H=innerHeight,parent=stack[stack.length-2];
+  let t1,t2,col=null;
+  if(!dragging){
+    if(L.node.root){t1='World';t2=`${REACH[1].size} territories in reach · hold & drag · tap outside to close`;}
+    else{const c=L.node,free=c.plots.filter(v=>!v).length;t1=c.n;
+      t2=`You ${cnt(c,1)} · AI ${cnt(c,2)} · ${free} open · ${GAME.moves} moves · `+(queued(c)?'battle queued':canContest(1,c)?'drop on an AI site to contest':REACH[1].has(c)&&GAME.turn===1?'drag to an open site':locked(c)?'full':'out of reach — view only');}
+  }
+  else if(G.dist<9){t1='Drag in any direction';t2='Keep going to roll around the globe';}
+  else if(!sel){t1='Empty space';t2='Keep dragging to wrap around';}
+  else if(sel.center){t1=G.fresh&&L.depth===0?'Release to close':'Release to stay';t2='Center';}
+  else if(sel.back){t1=parent?`↩  Back to ${parent.node.n}`:'↩  Close';t2='You reached the far side';col='#9aa6bf';}
+  else if(L.node.root){const c=sel.ref,lk=locked(c),r=REACH[1].has(c);col=r?PC[1]:sel.c;t1=sel.n;
+    t2=`${FAM[c.fam].n} · You ${cnt(c,1)} · AI ${cnt(c,2)} / ${c.plots.length} · `+(queued(c)?'battle queued · ':cnt(c,1)&&cnt(c,2)?'contested · ':'')+(r?'in reach · release to enter':lk?'full':'out of reach · view only');}
+  else{const c=sel.ref.parent,v=c.plots[sel.ref.i],ok=canSettle(c,sel.ref.i);col=ok?PC[1]:v?PC[v]:'#5d667b';t1=sel.n;
+    const ct=v===2&&canContest(1,c)&&!GAME.busy;if(ct)col='#ffb347';
+    t2=ct?`Held by AI · release to contest (1 move) · ${Math.max(2,cnt(c,1))} vs ${Math.max(2,cnt(c,2))} dice`:v===2&&queued(c)?'Held by AI · battle queued':v?`Held by ${PN[v]}`:ok?'Open site · release to claim (1 move)':GAME.moves<=0?'No moves left':locked(c)?'Territory is full':'Out of reach · claim next to your land first';}
+  if(G.reject>.05&&isTopReject(L)){t1='Can’t settle there';col=PC[2];}
+  ctx.font=`650 15px ${UI}`;const w1=ctx.measureText(t1).width;ctx.font=`500 12px ${UI}`;const w2=ctx.measureText(t2).width;
+  const pw=Math.min(innerWidth-16,Math.max(w1,w2)+78),ph=50,px=cx-pw/2,py=cy+R+56+ph/2<H-8?cy+R+56:cy-R-56;
+  ctx.globalAlpha=A;ctx.fillStyle='rgba(20,25,37,.95)';ctx.beginPath();ctx.roundRect?ctx.roundRect(px,py-ph/2,pw,ph,ph/2):ctx.rect(px,py-ph/2,pw,ph);ctx.fill();
+  ctx.strokeStyle=col?col+'99':'#2c3448';ctx.lineWidth=1;ctx.stroke();
+  const ox=px+28,oy=py,s=G.sector,cA=dragging&&s>=0?(L.node.root?FAM[ORDER.indexOf(s)].c:L.node.c):'#5d667b',
+    cB=dragging&&s>=0?(L.node.root?FAM[ORDER.indexOf((s+4)%8)].c:L.node.c):'#5d667b';
+  for(let i=0;i<M;i++){const a=(-90+i*SIG)*D2R,on=dragging&&i===G.slot;ctx.globalAlpha=A*(on?1:.4);
+    ctx.fillStyle=i===0||i===K+1?'#cfd6e6':i<=K?cA:cB;ctx.beginPath();ctx.arc(ox+Math.cos(a)*12,oy+Math.sin(a)*12,on?3.2:1.5,0,TAU);ctx.fill();}
+  ctx.globalAlpha=A;ctx.textAlign='left';ctx.textBaseline='middle';
+  ctx.fillStyle='#eef1f7';ctx.font=`650 15px ${UI}`;ctx.fillText(t1,px+54,py-8);
+  ctx.fillStyle='#8a93a8';ctx.font=`500 12px ${UI}`;ctx.fillText(t2,px+54,py+10);ctx.textAlign='center';
+}
+const isTopReject=L=>L===stack[stack.length-1];
+
+/* ================= Toasts ================= */
+const toast=document.getElementById('toast');let tt=0;
+function toastMove(p,leaf){
+  toast.innerHTML=badge(leaf.e,PC[p],true)+`<div><b style="color:${PC[p]}">${PN[p]}</b> ${p===1?'claim':'claims'} <b>${leaf.n}</b><small>${FAM[leaf.parent.fam].n} › ${leaf.parent.n} · ${cnt(leaf.parent,1)}–${cnt(leaf.parent,2)} of ${leaf.parent.plots.length} sites</small></div>`;
+  toast.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('on'),2400);
+}
+function toastText(t){toast.innerHTML=`<div>${t}</div>`;toast.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('on'),2200);}
+
+addEventListener('resize',resize);
+resize();newGame();
+})();
+</script>
+</body>
+</html>
