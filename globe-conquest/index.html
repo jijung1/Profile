@@ -230,9 +230,10 @@ body.mapOn .go:hover{opacity:.35}
   <li>Highest dice are compared in pairs; <b>ties go to the defender</b>. Each lost pair removes one site from the loser.</li>
   <li>The fight continues until one side runs out. If the attacker wins, they capture the territory with 1 site.</li></ul>
   <h3>Scoring</h3>
-  <ul><li>+1 per site · +3 per territory you own · +5 per realm where you own at least 5 of 8 territories.</li>
-  <li><b>Ring dominance:</b> own all 8 territories of a ring → <b>+8 points</b> and <b>+1 move per turn</b>.</li>
-  <li><b>Realm dominance:</b> own all 8 territories of a realm → <b>+10 points</b> and <b>+1 move per turn</b>. Bonus moves cap at +3.</li></ul>
+  <ul><li>+1 per site · +3 per territory you own.</li>
+  <li><b>Majority</b> (own 5 of a ring's or realm's 8 territories): ring <b>+4 points</b>, realm <b>+5 points</b>, and <b>+1 move per turn</b> each. Only one side can hold a majority, and a 4–4 split gives it to nobody.</li>
+  <li><b>Full control</b> (own all 8): a further ring <b>+8</b> or realm <b>+10 points</b>, on top of the majority bonus. No extra move.</li>
+  <li>Bonus moves cap at <b>+3</b> (8 moves a turn), however many majorities you hold. Point bonuses are never capped.</li></ul>
   <h3>Controls</h3>
   <ul><li>Hold the center button and drag to aim; keep dragging to roll around the globe and wrap to the far side. Release on a territory to enter it, release on a site to claim or attack.</li>
   <li>Go back: tap outside the globe, use the breadcrumb at the top, press Esc, or roll to the far side (↩).</li>
@@ -348,8 +349,8 @@ function reach(p){const S=new Set();
 // battle strength: attacker = its sites in territories bordering the target; defender = sites in the target + its bordering territories
 const attPool=(p,c)=>c.nb.reduce((s,x)=>s+cnt(x,p),0);
 const defPool=(c,p)=>cnt(c,p)+attPool(p,c);
-function famCount(p){let f=0;FAM.forEach((_,fi)=>{let k=0;for(const c of CATS)if(c.fam===fi&&ctrl(c)===p)k++;if(k>=5)f++;});return f;}
-function score(p){let pl=0,rg=0;for(const c of CATS){pl+=cnt(c,p);if(ctrl(c)===p)rg++;}return pl+3*rg+5*famCount(p)+RING_BONUS*fullRings(p).length+REALM_BONUS*fullRealms(p).length;}
+function famCount(p){return majRealms(p).length;}
+function score(p){let pl=0,rg=0;for(const c of CATS){pl+=cnt(c,p);if(ctrl(c)===p)rg++;}return pl+3*rg+RING_MAJ*majRings(p).length+REALM_MAJ*majRealms(p).length+RING_FULL*fullRings(p).length+REALM_FULL*fullRealms(p).length;}
 function moves(p){const out=[];for(const c of reach(p))c.plots.forEach((v,i)=>{if(!v)out.push([c,i])});return out;}
 const queued=()=>false;
 let REACH=[null,new Set(),new Set()];
@@ -394,7 +395,7 @@ function nextTurn(){
   GAME.turn=GAME.turn===1?2:1;if(GAME.turn===1)GAME.round++;
   GAME.moves=GAME.maxMoves=MOVES+extraMoves(GAME.turn);
   if(checkOver())return;
-  startTurnLog(GAME.turn);if(GAME.maxMoves>MOVES)logEv(GAME.turn,`<span class="bon">+${GAME.maxMoves-MOVES} bonus move${GAME.maxMoves-MOVES>1?'s':''}</span> from dominance`);
+  startTurnLog(GAME.turn);if(GAME.maxMoves>MOVES){const e=earnedMoves(GAME.turn);logEv(GAME.turn,`<span class="bon">+${GAME.maxMoves-MOVES} bonus move${GAME.maxMoves-MOVES>1?'s':''}</span> from ${e} majorit${e>1?'ies':'y'}`+(e>MAX_EXTRA?` (cap of +${MAX_EXTRA} reached)`:''));}
   refresh();GAME.turn===1?SFX.turn():SFX.enemy();
   if(GAME.turn===2)aiTurn();
 }
@@ -484,7 +485,7 @@ function finish(winner){
   const a=score(1),b=score(2),w=winner||(a>b?1:a<b?2:0);setTimeout(()=>(w===1?SFX.win:SFX.lose)(),200);
   document.getElementById('ovT').textContent=w===1?'Victory':w===2?'Defeat':'Draw';
   const rg=p=>CATS.filter(c=>ctrl(c)===p).length;
-  document.getElementById('ovP').innerHTML=(winner?`${PN[3-winner]} ${winner===2?'have':'has'} no sites left<br>`:'')+`${a} – ${b}<br>Territories ${rg(1)} vs ${rg(2)} · Realms ${famCount(1)} vs ${famCount(2)}<br>Rings dominated ${fullRings(1).length} vs ${fullRings(2).length} · Realms dominated ${fullRealms(1).length} vs ${fullRealms(2).length}`;
+  document.getElementById('ovP').innerHTML=(winner?`${PN[3-winner]} ${winner===2?'have':'has'} no sites left<br>`:'')+`${a} – ${b}<br>Territories ${rg(1)} vs ${rg(2)} · Majorities: rings ${majRings(1).length} vs ${majRings(2).length} · realms ${majRealms(1).length} vs ${majRealms(2).length}<br>Full control: rings ${fullRings(1).length} vs ${fullRings(2).length} · realms ${fullRealms(1).length} vs ${fullRealms(2).length}`;
   document.getElementById('over').classList.add('on');
 }
 document.getElementById('ovB').onclick=newGame;
@@ -537,7 +538,7 @@ let SEL=null; // {c, leaf} or {f}
 function renderMap(){
   let grid='',hier='',borders='',nodes='',labels='';
   // guides: ring circles + ring numbers, pole bands
-  for(let r=1;r<=K;r++){const R=ringR(r),own=[1,2].find(p=>fullRings(p).includes(r));grid+=own?`<circle r="${R}" fill="none" stroke="${PC[own]}" stroke-opacity=".45" stroke-width="6" style="vector-effect:non-scaling-stroke"/>`:`<circle r="${R}" fill="none" stroke="#ffffff07"/>`;
+  for(let r=1;r<=K;r++){const R=ringR(r),own=[1,2].find(p=>majRings(p).includes(r)),full=own&&fullRings(own).includes(r);grid+=own?`<circle r="${R}" fill="none" stroke="${PC[own]}" stroke-opacity="${full?.55:.3}" stroke-width="${full?7:3}" style="vector-effect:non-scaling-stroke"/>`:`<circle r="${R}" fill="none" stroke="#ffffff07"/>`;
     const[x,y]=pol(R,-67.5*D2R);grid+=`<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="700" fill="#ffffff30">R${r}</text>`;}
   {const[x,y]=pol(LY.POLE-24,-67.5*D2R);grid+=`<text x="${x}" y="${y}" text-anchor="middle" font-size="12" letter-spacing="2" font-weight="700" fill="#ffffff40">NEAR POLE</text>`;
    const[x2,y2]=pol(LY.FAR+4*LY.GAP+10,-67.5*D2R);grid+=`<text x="${x2}" y="${y2}" text-anchor="middle" font-size="12" letter-spacing="2" font-weight="700" fill="#ffffff40">FAR SIDE</text>`;}
@@ -563,7 +564,7 @@ function renderMap(){
       <path d="${sigilD(f.sig,17)}" fill="${f.c}" fill-rule="evenodd"/></g>`;
     const[lx,ly]=pol(LY.OUT,f.a);
     labels+=`<text x="${lx}" y="${ly-12}" text-anchor="middle" font-size="34" font-weight="720" letter-spacing="2" fill="${f.c}">${f.n.toUpperCase()}</text>
-      <text x="${lx}" y="${ly+24}" text-anchor="middle" font-size="19" fill="#8a93a8"><tspan fill="${PC[1]}">You ${ty}</tspan> · <tspan fill="${PC[2]}">EvilDarthMonkey25 ${ta}</tspan> · 5 of 8 to hold${fullRealms(1).includes(fi)||fullRealms(2).includes(fi)?` · <tspan fill="#ffd36b" font-weight="700">DOMINATED</tspan>`:''}${own?` · <tspan fill="${PC[own]}" font-weight="700">${PN[own]} ${own===1?'hold':'holds'}</tspan>`:''}</text>`;});
+      <text x="${lx}" y="${ly+24}" text-anchor="middle" font-size="19" fill="#8a93a8"><tspan fill="${PC[1]}">You ${ty}</tspan> · <tspan fill="${PC[2]}">EvilDarthMonkey25 ${ta}</tspan> · 5 of 8 for majority${fullRealms(1).includes(fi)||fullRealms(2).includes(fi)?` · <tspan fill="#ffd36b" font-weight="700">FULLY HELD</tspan>`:''}${own?` · <tspan fill="${PC[own]}" font-weight="700">${PN[own]} ${own===1?'hold':'holds'}</tspan>`:''}</text>`;});
   // territories + their sites
   const C=2*Math.PI*20;
   CATS.forEach((c,ci)=>{
@@ -644,7 +645,7 @@ function showInfo(c,leaf){
 function showRealm(f){
   SEL={f};renderMap();const fi=FAM.indexOf(f);let a=0,b=0;for(const c of CATS)if(c.fam===fi){const k=ctrl(c);if(k===1)a++;else if(k===2)b++;}
   const own=famOwner(fi),el=document.getElementById('info');
-  el.innerHTML=`<span class="bd sg" style="box-shadow:inset 0 0 0 1.5px ${f.c}"><svg viewBox="-20 -20 40 40" width="24" height="24"><path d="${sigilD(f.sig,16)}" fill="${f.c}" fill-rule="evenodd"/></svg></span><div><b>${f.n}</b><small>8 territories · <span style="color:var(--you)">You lead ${a}</span> · <span style="color:var(--ai)">EvilDarthMonkey25 leads ${b}</span> · ${own?`held by ${PN[own]} (+5)`:'control 5 to hold it (+5)'}</small></div>`;
+  el.innerHTML=`<span class="bd sg" style="box-shadow:inset 0 0 0 1.5px ${f.c}"><svg viewBox="-20 -20 40 40" width="24" height="24"><path d="${sigilD(f.sig,16)}" fill="${f.c}" fill-rule="evenodd"/></svg></span><div><b>${f.n}</b><small>8 territories · <span style="color:var(--you)">You lead ${a}</span> · <span style="color:var(--ai)">EvilDarthMonkey25 leads ${b}</span> · ${own?`majority: ${PN[own]} (+${REALM_MAJ} pts, +1 move)`:`own 5 for the majority (+${REALM_MAJ} pts, +1 move)`} · all 8 for full control (+${REALM_FULL})</small></div>`;
   el.classList.add('on');
 }
 function hideInfo(){const had=SEL;SEL=null;document.getElementById('info').classList.remove('on');if(had)renderMap();}
@@ -983,19 +984,28 @@ const paintSnd=()=>{sndBtn.textContent=SFX.on?'♪':'♪̸';sndBtn.classList.tog
 sndBtn.onclick=()=>{SFX.toggle();paintSnd();if(SFX.on)SFX.claim();};paintSnd();
 
 /* ================= Ring & realm dominance bonuses ================= */
-const RING_BONUS=8,REALM_BONUS=10,MAX_EXTRA=3;
-const fullRings=p=>{const o=[];for(let r=1;r<=K;r++)if(CATS.every(c=>c.ring!==r||ctrl(c)===p))o.push(r);return o;};
-const fullRealms=p=>FAM.map((f,fi)=>fi).filter(fi=>CATS.every(c=>c.fam!==fi||ctrl(c)===p));
-const extraMoves=p=>Math.min(MAX_EXTRA,fullRings(p).length+fullRealms(p).length);
+// Two tiers. Majority (5 of 8 territories): points + 1 extra move per turn. Full (8 of 8): extra points only.
+// Only one side can hold a majority (5+5>8), and an enemy needs 4 territories, not 1 site, to deny it.
+const MAJ=5,RING_MAJ=4,REALM_MAJ=5,RING_FULL=8,REALM_FULL=10,MAX_EXTRA=3;
+const ringCount=(p,r)=>{let k=0;for(const c of CATS)if(c.ring===r&&ctrl(c)===p)k++;return k;};
+const realmCount=(p,fi)=>{let k=0;for(const c of CATS)if(c.fam===fi&&ctrl(c)===p)k++;return k;};
+const RINGS=[1,2,3,4,5,6,7,8],REALMI=[0,1,2,3,4,5,6,7];
+const majRings=p=>RINGS.filter(r=>ringCount(p,r)>=MAJ),fullRings=p=>RINGS.filter(r=>ringCount(p,r)===8);
+const majRealms=p=>REALMI.filter(fi=>realmCount(p,fi)>=MAJ),fullRealms=p=>REALMI.filter(fi=>realmCount(p,fi)===8);
+const earnedMoves=p=>majRings(p).length+majRealms(p).length;
+const extraMoves=p=>Math.min(MAX_EXTRA,earnedMoves(p));
 const BON={1:new Set(),2:new Set()};
 function checkBonuses(silent){
   for(const p of[1,2]){
-    const now=new Set([...fullRings(p).map(r=>'r'+r),...fullRealms(p).map(fi=>'f'+fi)]);
+    const now=new Set([...majRings(p).map(r=>'r'+r),...majRealms(p).map(fi=>'f'+fi),...fullRings(p).map(r=>'R'+r),...fullRealms(p).map(fi=>'F'+fi)]);
     if(!silent){
-      for(const k of now)if(!BON[p].has(k)){const nm=k[0]==='r'?`Ring ${k.slice(1)}`:FAM[+k.slice(1)].n,pts=k[0]==='r'?RING_BONUS:REALM_BONUS;
-        logEv(p,`<span class="bon">Secured ${nm}</span> · +${pts} pts, +1 move per turn`);
-        toastText(`<b style="color:${PC[p]}">${PN[p]}</b> ${p===1?'secure':'secures'} <b>${nm}</b> · +${pts} points · +1 move per turn`);SFX.bonus();}
-      for(const k of BON[p])if(!now.has(k)){const nm=k[0]==='r'?`Ring ${k.slice(1)}`:FAM[+k.slice(1)].n;logEv(p,`Lost control of ${nm}`);}
+      const name=k=>/r/i.test(k[0])?`Ring ${k.slice(1)}`:FAM[+k.slice(1)].n;
+      for(const k of now)if(!BON[p].has(k)){
+        const full=k[0]==='R'||k[0]==='F',pts={r:RING_MAJ,f:REALM_MAJ,R:RING_FULL,F:REALM_FULL}[k[0]];
+        const what=full?`Full control of ${name(k)}`:`Majority in ${name(k)}`,perk=full?`+${pts} pts`:`+${pts} pts, +1 move per turn`;
+        logEv(p,`<span class="bon">${what}</span> · ${perk}`);
+        toastText(`<b style="color:${PC[p]}">${PN[p]}</b> ${p===1?'take':'takes'} <b>${full?'full control of':'the majority in'} ${name(k)}</b> · ${perk}`);SFX.bonus();}
+      for(const k of BON[p])if(!now.has(k))logEv(p,`Lost ${k[0]==='R'||k[0]==='F'?'full control of':'the majority in'} ${name(k)}`);
     }
     BON[p]=now;
   }
