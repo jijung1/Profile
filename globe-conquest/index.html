@@ -120,6 +120,67 @@ button{font-family:inherit}
   border-radius:999px;padding:9px 16px;font:600 13px inherit;cursor:pointer;z-index:2;backdrop-filter:blur(4px)}
 .i-skip:hover{background:#ffffff22}
 .hcard .replay{margin-top:16px;background:#1d2a42;border:1px solid #3d5a86;color:#fff;border-radius:999px;padding:8px 16px;font:600 13px inherit;cursor:pointer}
+.arena{position:fixed;left:50%;top:max(64px,calc(env(safe-area-inset-top) + 54px));z-index:45;width:min(580px,95vw);transform:translate(-50%,-14px) scale(.94);opacity:0;pointer-events:none;
+  transition:transform .4s cubic-bezier(.2,.9,.25,1.25),opacity .22s;touch-action:none;user-select:none}
+.arena.on{transform:translate(-50%,0) scale(1);opacity:1;pointer-events:auto}
+.ar-in{position:relative;overflow:hidden;isolation:isolate;contain:paint;background:linear-gradient(180deg,#171d2bf8,#11151ff8);border:1px solid #ffb34766;border-radius:20px;padding:12px 16px 10px;
+  box-shadow:0 26px 60px -18px #000,0 0 0 4px #ffb34710,inset 0 1px 0 #ffffff10}
+.ar-head{display:flex;gap:10px;align-items:baseline;margin-bottom:2px}.ar-head b{font-size:16px;letter-spacing:-.01em}.ar-head small{color:var(--mute);font-size:12px}
+.ar-side{display:flex;align-items:center;gap:10px;margin:6px 0}
+.ar-tag{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ar-bar{flex:1;height:9px;border-radius:6px;background:#232a3b;position:relative;overflow:hidden;box-shadow:inset 0 1px 2px #0008}
+.ar-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;width:100%}
+.ar-bar .ghost{background:#ffffffb0;transition:width .55s .38s cubic-bezier(.3,0,.2,1)}
+.ar-bar .fill{background:linear-gradient(90deg,var(--pc),color-mix(in srgb,var(--pc) 70%,#fff));transition:width .16s ease-out}
+.ar-n{font-variant-numeric:tabular-nums;min-width:24px;text-align:right;font-size:15px}
+.ar-lanes{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 7px;padding:8px 0 4px;min-height:84px;--ds:27px}
+.lane{display:flex;flex-direction:column;align-items:center;gap:5px;position:relative;transition:transform .35s cubic-bezier(.2,.9,.25,1.2),opacity .3s}
+.ar-lanes.focusing .lane{opacity:.22}.ar-lanes.focusing .lane.focus{opacity:1;transform:scale(1.45);z-index:3}
+.clash{width:3px;height:12px;border-radius:2px;background:#ffffff1c;position:relative}
+.clash.up,.clash.down{background:var(--wc);box-shadow:0 0 10px var(--wc);animation:clashpulse .4s ease-out}
+@keyframes clashpulse{0%{transform:scaleY(.2);opacity:.3}50%{transform:scaleY(1.6)}100%{transform:scaleY(1);opacity:1}}
+.die3{width:var(--ds);height:var(--ds);perspective:220px;position:relative;display:block}
+.die3.empty{visibility:hidden}
+.die3.drop{animation:drop .6s cubic-bezier(.2,.9,.3,1.25) both}
+@keyframes drop{0%{transform:translateY(-22px) scale(.5);opacity:0}60%{transform:translateY(3px) scale(1.05);opacity:1}100%{transform:none;opacity:1}}
+.cube{position:absolute;inset:0;transform-style:preserve-3d}
+.fc{position:absolute;inset:0;border-radius:19%;background:#eef2f8;box-shadow:inset 0 0 0 2px var(--pc);display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:13%;backface-visibility:hidden}
+.fc i{border-radius:50%;margin:13%}.fc i.on{background:#141925}
+.f1{transform:translateZ(calc(var(--ds)/2))}.f6{transform:rotateY(180deg) translateZ(calc(var(--ds)/2))}
+.f3{transform:rotateY(90deg) translateZ(calc(var(--ds)/2))}.f4{transform:rotateY(-90deg) translateZ(calc(var(--ds)/2))}
+.f2{transform:rotateX(90deg) translateZ(calc(var(--ds)/2))}.f5{transform:rotateX(-90deg) translateZ(calc(var(--ds)/2))}
+.die3.win .fc{box-shadow:inset 0 0 0 2px var(--pc),0 0 0 2px #fff,0 0 16px var(--pc)}
+.die3.win{animation:winpop .38s cubic-bezier(.2,.9,.3,1.6)}
+@keyframes winpop{40%{transform:scale(1.28)}100%{transform:scale(1.08)}}
+.die3.win.drop,.die3.lose.drop{animation-fill-mode:none}
+.die3.lose{animation:crack .5s ease-in forwards}
+@keyframes crack{0%{transform:none}25%{transform:translateX(-3px) rotate(-10deg)}50%{transform:translateX(3px) rotate(8deg)}100%{transform:translateY(7px) rotate(16deg) scale(.82);opacity:.2;filter:grayscale(1)}}
+.die3.idle{opacity:.28;filter:grayscale(.6)}
+.die3.shield::after{content:"";position:absolute;right:-7px;top:-8px;width:13px;height:15px;background:var(--pc);box-shadow:0 0 10px var(--pc);
+  clip-path:polygon(50% 0,100% 18%,92% 66%,50% 100%,8% 66%,0 18%);animation:pop .4s cubic-bezier(.2,.9,.3,1.6)}
+.spark{position:absolute;left:50%;top:50%;width:5px;height:5px;margin:-2.5px;border-radius:50%;background:var(--wc);box-shadow:0 0 8px var(--wc);animation:spark .55s cubic-bezier(.1,.7,.3,1) forwards;pointer-events:none}
+@keyframes spark{to{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
+.ar-tally{font-size:12px;color:var(--mute);text-align:center;min-height:17px;font-variant-numeric:tabular-nums}
+.ar-res{text-align:center;font-size:14px;min-height:20px;margin-top:2px}
+.ar-foot{display:flex;gap:6px;align-items:center;justify-content:center;margin-top:8px;font-size:11.5px;color:var(--mute)}
+.ar-foot button{background:#1f2636;border:1px solid #2c3448;color:#cfd6e6;border-radius:999px;padding:3px 10px;font-weight:600;font-size:11.5px;cursor:pointer}
+.ar-foot button:disabled{opacity:.35;cursor:default}
+.ar-foot button:not(:disabled):hover{border-color:#ffb347;color:#fff}
+.ar-foot button.on{background:#7a4a14;border-color:#ffb347;color:#fff}
+.ar-vs{position:absolute;inset:0;display:grid;place-items:center;font-weight:900;font-style:italic;font-size:64px;color:#ffb347;text-shadow:0 0 30px #ffb347aa;opacity:0;pointer-events:none;letter-spacing:.04em}
+.arena.opening .ar-vs{animation:vs 2s cubic-bezier(.2,.9,.25,1) forwards}
+@keyframes vs{0%{opacity:0;transform:scale(2.4) skewX(-14deg)}25%{opacity:1;transform:scale(1) skewX(-14deg)}75%{opacity:1}100%{opacity:0;transform:scale(.9) skewX(-14deg)}}
+.arena.opening .ar-lanes{opacity:.15}
+.ar-call{position:absolute;left:0;right:0;top:40%;text-align:center;font-weight:900;font-size:clamp(26px,6vw,42px);letter-spacing:.07em;color:var(--cc);
+  text-shadow:0 0 22px var(--cc),0 2px 0 #000;pointer-events:none;opacity:0}
+.ar-call.on{animation:call 2s cubic-bezier(.2,.9,.25,1) forwards}.ar-call.stay{animation:callstay .8s cubic-bezier(.2,.9,.25,1.3) forwards}
+@keyframes call{0%{opacity:0;transform:scale(1.9)}14%{opacity:1;transform:scale(1)}72%{opacity:1}100%{opacity:0;transform:scale(1.05)}}
+@keyframes callstay{0%{opacity:0;transform:scale(2)}100%{opacity:1;transform:scale(1)}}
+.ar-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;border-radius:20px}
+body.rm .ar-vs,body.rm .die3.drop,body.rm .die3.win,body.rm .clash{animation:none!important}
+body.rm .die3.lose{animation:none;opacity:.22;filter:grayscale(1)}
+body.rm .ar-call.on,body.rm .ar-call.stay{animation:none;opacity:1}
+.hset{display:flex;gap:16px;align-items:center;flex-wrap:wrap}.hset select{background:#1f2636;color:#fff;border:1px solid #2c3448;border-radius:8px;padding:4px 8px}
 .bd{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-weight:760;font-size:14px;letter-spacing:.02em;flex:none}
 .bd.sg{background:#111725}
 .crumbs i{width:8px;height:8px;border-radius:50%;display:inline-block}
@@ -204,10 +265,16 @@ body.mapOn .go:hover{opacity:.35}
 
 <div class="dock" id="dock"><button class="go" id="go"><span class="ic"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9.2"/><ellipse cx="12" cy="12" rx="4.2" ry="9.2"/><path d="M2.8 12h18.4M4.6 7h14.8M4.6 17h14.8"/></svg></span><span class="lb">Hold &amp; drag</span></button></div>
 <div class="info" id="info"></div>
-<div class="battle" id="battle" title="Click to speed up"><div class="bh"><b id="bT"></b><small id="bS"></small></div>
-  <div class="brow"><span class="bl" style="color:var(--you)">You <b id="nA"></b></span><div class="dice" id="dA"></div></div>
-  <div class="brow"><span class="bl" style="color:var(--ai)">EvilDarthMonkey25 <b id="nD"></b></span><div class="dice" id="dD"></div></div>
-  <div class="bres" id="bR"></div></div>
+<div class="arena" id="battle"><div class="ar-in">
+  <div class="ar-head"><b id="bT"></b><small id="bS"></small></div>
+  <div class="ar-side" id="sideA"><span class="ar-tag" id="tagA"></span><div class="ar-bar"><i class="ghost"></i><i class="fill"></i></div><b class="ar-n" id="nA"></b></div>
+  <div class="ar-lanes" id="lanes"></div>
+  <div class="ar-side" id="sideD"><span class="ar-tag" id="tagD"></span><div class="ar-bar"><i class="ghost"></i><i class="fill"></i></div><b class="ar-n" id="nD"></b></div>
+  <div class="ar-tally" id="bTally"></div>
+  <div class="ar-res" id="bR"></div>
+  <div class="ar-foot"><button id="bSkipBtn">Skip battle ›</button></div>
+  <div class="ar-vs">VS</div><div class="ar-call" id="bCall"></div><div class="ar-flash"></div>
+</div></div>
 <div class="status" id="status"></div>
 
 <div class="scrim" id="scrim"></div>
@@ -238,6 +305,9 @@ body.mapOn .go:hover{opacity:.35}
   <ul><li>Hold the center button and drag to aim; keep dragging to roll around the globe and wrap to the far side. Release on a territory to enter it, release on a site to claim or attack.</li>
   <li>Go back: tap outside the globe, use the breadcrumb at the top, press Esc, or roll to the far side (↩).</li>
   <li>Exploded view: drag to pan, scroll or pinch to zoom, click anything to inspect. Light lines are borders; dashed arcs cross the near pole and the far side.</li></ul>
+  <h3>Settings</h3>
+  <div class="hset">
+  <label><input type="checkbox" id="setRM"> Reduce motion (no shake or flashes)</label></div>
   <button class="replay" id="replayIntro">▶ Replay intro</button>
 </div></div>
 <div class="intro" id="intro">
@@ -440,44 +510,189 @@ const bEl=document.getElementById('battle');let bFast=false;
 bEl.addEventListener('click',()=>{bFast=true;});
 const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
 const dieHTML=(v,p,cls='')=>`<span class="die ${cls}" style="--pc:${PC[p]}">${[...Array(9)].map((_,i)=>`<i${PIPS[v].includes(i)?' class="on"':''}></i>`).join('')}</span>`;
-function battle(c,att,done){
-  const def=3-att;bFast=false;GAME.battle=c;let tla=0,tld=0;const a0=attPool(att,c),d0=defPool(c,def);refresh();bEl.classList.add('on');toast.classList.remove('on');
-  const T=k=>bFast?k*.2:k;
+/* ================= Battle presentation: settings ================= */
+const SPD={cinematic:2,quick:1,instant:0};
+const BSET={speed:'cinematic',reduce:false};   // battles are always cinematic; Skip jumps to the result
+try{const v=JSON.parse(localStorage.getItem('gc.battle')||'null');if(v)Object.assign(BSET,v);else if(matchMedia('(prefers-reduced-motion: reduce)').matches)BSET.reduce=true;}catch(_){}
+BSET.speed='cinematic';
+const saveB=()=>{try{localStorage.setItem('gc.battle',JSON.stringify(BSET))}catch(_){};syncBset();};
+function syncBset(){
+  document.querySelectorAll('#battle [data-sp]').forEach(b=>b.classList.toggle('on',b.dataset.sp===BSET.speed));
+  const sp=document.getElementById('setSpeed'),rm=document.getElementById('setRM');if(sp)sp.value=BSET.speed;if(rm)rm.checked=BSET.reduce;
+  document.body.classList.toggle('rm',BSET.reduce);
+}
+const SKIP={};let bSkip=false;
+const wait=ms=>bSkip?Promise.reject(SKIP):sleep(ms).then(()=>{if(bSkip)throw SKIP;});
+document.getElementById('bSkipBtn').addEventListener('click',e=>{e.stopPropagation();if(GAME.battle&&!bSkip){bSkip=true;SFX.back();}});
+const sleep=ms=>new Promise(r=>setTimeout(r,Math.max(0,ms)));
+
+/* ================= Map effects (SVG, world coordinates) ================= */
+const NS='http://www.w3.org/2000/svg';
+const mapOff=()=>mapEl.classList.contains('off');
+function svgEl(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);(parent||fxL).appendChild(e);return e;}
+function fxBurst(x,y,col,big){
+  if(mapOff())return;const g=svgEl('g',{transform:`translate(${x} ${y})`});
+  const ring=svgEl('circle',{r:10,fill:'none',stroke:col,'stroke-width':big?3:2,style:'vector-effect:non-scaling-stroke'},g);
+  ring.animate([{transform:'scale(.3)',opacity:1},{transform:`scale(${big?5:2.6})`,opacity:0}],{duration:big?1500:950,easing:'cubic-bezier(.2,.8,.2,1)',fill:'forwards'});
+  const n=BSET.reduce?3:big?10:7;
+  for(let i=0;i<n;i++){const a=Math.random()*6.283,d=(big?64:30)+Math.random()*22,p=svgEl('circle',{r:big?3.6:2.6,fill:col},g);
+    p.animate([{transform:'translate(0px,0px)',opacity:1},{transform:`translate(${(Math.cos(a)*d).toFixed(1)}px,${(Math.sin(a)*d).toFixed(1)}px)`,opacity:0}],
+      {duration:850+Math.random()*450,easing:'cubic-bezier(.1,.7,.3,1)',fill:'forwards'});}
+  setTimeout(()=>g.remove(),2000);
+}
+const edgeBetween=(x,y)=>EDGES.find(e=>(e[0]===x&&e[1]===y)||(e[0]===y&&e[1]===x));
+function fxTracers(c,att){
+  if(mapOff())return;
+  const fronts=c.nb.filter(x=>cnt(x,att));
+  fronts.forEach((x,i)=>{const e=edgeBetween(x,c);if(!e)return;const fwd=e[0]===x;
+    for(let s=0;s<(BSET.reduce?1:3);s++)setTimeout(()=>{
+      const glow=svgEl('path',{d:e.info.d,fill:'none',stroke:PC[att],'stroke-width':7,'stroke-opacity':.25,pathLength:100,'stroke-linecap':'round','stroke-dasharray':'10 200',style:'vector-effect:non-scaling-stroke'});
+      const core=svgEl('path',{d:e.info.d,fill:'none',stroke:'#fff','stroke-width':2.2,pathLength:100,'stroke-linecap':'round','stroke-dasharray':'6 200',style:'vector-effect:non-scaling-stroke'});
+      const kf=fwd?[{strokeDashoffset:10},{strokeDashoffset:-100}]:[{strokeDashoffset:-100},{strokeDashoffset:10}];
+      [glow,core].forEach(p=>p.animate(kf,{duration:950,easing:'cubic-bezier(.5,0,.9,.6)',fill:'forwards'}));
+      setTimeout(()=>{glow.remove();core.remove();fxBurst(c.x,c.y,PC[att],false);},960);
+    },i*200+s*420);});
+}
+function fxCapture(c,col){
+  if(mapOff())return;fxBurst(c.x,c.y,col,true);setTimeout(()=>fxBurst(c.x,c.y,col,true),180);
+  const g=svgEl('g',{});const X=c.x,Y=c.y-17;
+  svgEl('path',{d:'M0 0V-46',stroke:'#e9edf5','stroke-width':2.4,'stroke-linecap':'round',style:'vector-effect:non-scaling-stroke'},g);
+  const fl=svgEl('path',{d:'M0 -46L27 -38L0 -30Z',fill:col},g);
+  g.animate([{transform:`translate(${X}px,${Y}px) scale(1,0)`},{transform:`translate(${X}px,${Y}px) scale(1,1.15)`,offset:.7},{transform:`translate(${X}px,${Y}px) scale(1,1)`}],{duration:520,easing:'ease-out',fill:'forwards'});
+  if(!BSET.reduce)fl.animate([{transform:'skewY(0deg)'},{transform:'skewY(-7deg)'},{transform:'skewY(0deg)'}],{duration:800,iterations:3});
+  setTimeout(()=>{g.animate([{opacity:1},{opacity:0}],{duration:400,fill:'forwards'});setTimeout(()=>g.remove(),420);},2700);
+}
+function cameraTo(c){
+  if(mapOff())return null;const prev={s:VP.s,tx:VP.tx,ty:VP.ty},fit=fitTarget().s,s=Math.min(Math.max(VP.s,fit*2.3),1.6);
+  animVP({s,tx:innerWidth/2-c.x*s,ty:innerHeight*.66-c.y*s},800);return()=>animVP(prev,800);
+}
+function quake(el,mag){if(BSET.reduce||!el||mag<=0)return;const k=[];for(let i=0;i<6;i++){const f=mag*(1-i/6);k.push({transform:`translate(${((Math.random()-.5)*2*f).toFixed(1)}px,${((Math.random()-.5)*2*f).toFixed(1)}px)`});}
+  k.push({transform:'translate(0,0)'});el.animate(k,{duration:240,easing:'linear'});}
+
+/* ================= Arena UI ================= */
+const FACE={1:[0,0],2:[-90,0],3:[0,-90],4:[0,90],5:[90,0],6:[0,180]};
+const FACES_HTML=[1,2,3,4,5,6].map(f=>`<span class="fc f${f}">${[...Array(9)].map((_,i)=>`<i${PIPS[f].includes(i)?' class="on"':''}></i>`).join('')}</span>`).join('');
+const die3=(col)=>`<span class="die3" style="--pc:${col}"><span class="cube">${FACES_HTML}</span></span>`;
+const lanesEl=document.getElementById('lanes'),arIn=bEl.querySelector('.ar-in');
+function callout(txt,col,stay){const el=document.getElementById('bCall');el.textContent=txt;el.style.setProperty('--cc',col);
+  el.classList.remove('on','stay');void el.offsetWidth;el.classList.add(stay?'stay':'on');}
+function flash(strong){if(BSET.reduce)return;bEl.querySelector('.ar-flash').animate([{opacity:strong?.55:.28},{opacity:0}],{duration:strong?380:220,easing:'ease-out'});}
+function sparks(host,col,n){if(BSET.reduce)n=Math.min(n,3);for(let i=0;i<n;i++){const s=document.createElement('i');s.className='spark';
+  const a=Math.random()*6.283,d=16+Math.random()*22;s.style.cssText=`--wc:${col};--dx:${(Math.cos(a)*d).toFixed(1)}px;--dy:${(Math.sin(a)*d).toFixed(1)}px`;
+  host.appendChild(s);setTimeout(()=>s.remove(),620);}}
+
+/* removal helpers: return where the site was, for the map burst */
+const dropFrom=(x,p)=>{const idx=x.plots.map((v,i)=>v===p?i:-1).filter(i=>i>=0);const i=idx[Math.floor(Math.random()*idx.length)];x.plots[i]=0;return x.children[i];};
+const biggest=(list,p)=>list.filter(x=>cnt(x,p)).sort((u,v)=>cnt(v,p)-cnt(u,p)||Math.random()-.5)[0];
+const loseAtt=(c,att)=>{const x=biggest(c.nb,att);return x?dropFrom(x,att):null;};
+const loseDef=(c,def)=>{if(cnt(c,def))return dropFrom(c,def);const x=biggest(c.nb,def);return x?dropFrom(x,def):null;};
+
+function concludeBattle(c,att,w,a0,d0,tla,tld){
+  const def=3-att;
+  if(w===att){const i=c.plots.findIndex(v=>!v);if(i>=0){c.plots[i]=att;GAME.last={p:att,c,i};}}
+  (w===1?SFX.win:SFX.lose)();if(w===att)SFX.boom();
+  fxCapture(c,PC[w===att?att:def]);
+  logEv(att,`Attacked <b>${c.n}</b> · ${a0} vs ${d0} dice → `+(w===att?`<b style="color:${PC[att]}">captured</b>`:`<b style="color:${PC[def]}">repelled</b>`)+` · lost ${tla}, destroyed ${tld}`);
+}
+
+function instantBattle(c,att,done){
+  const def=3-att,a0=attPool(att,c),d0=defPool(c,def);let tla=0,tld=0;
+  while(attPool(att,c)&&defPool(c,def)){const a=attPool(att,c),d=defPool(c,def),A=roll(Math.max(2,a)),D=roll(Math.max(2,d));let la=0,ld=0;
+    for(let k=0;k<Math.min(A.length,D.length);k++){if(la>=a||ld>=d)break;if(A[k]>D[k])ld++;else la++;}
+    for(let k=0;k<la;k++)loseAtt(c,att);for(let k=0;k<ld;k++)loseDef(c,def);tla+=la;tld+=ld;}
+  const w=attPool(att,c)?att:def;concludeBattle(c,att,w,a0,d0,tla,tld);refresh();
+  toastText(`<b style="color:${PC[att]}">${PN[att]}</b> ${att===1?'attack':'attacks'} <b>${c.n}</b> · ${a0} vs ${d0} → `+(w===att?`<b style="color:${PC[att]}">captured</b>`:`<b style="color:${PC[def]}">repelled</b>`));
+  setTimeout(()=>done(w),380);
+}
+
+/* ================= The battle ================= */
+async function battle(c,att,done){
+  const def=3-att,a0=attPool(att,c),d0=defPool(c,def);
+  bSkip=false;document.getElementById('bSkipBtn').disabled=false;
+  let tla=0,tld=0,rnd=0,stand=false;
+  const pace=()=>Math.max(.55,Math.pow(.88,Math.max(0,rnd-1)))*(a0+d0<=4?.8:1);
+  const T=ms=>ms*SPD.cinematic*pace();
+  GAME.battle=c;refresh();toast.classList.remove('on');
   const fronts=c.nb.filter(x=>cnt(x,att)).length;
   document.getElementById('bT').textContent=c.n;
-  document.getElementById('bS').innerHTML=`${FAM[c.fam].n} · <span style="color:${PC[att]}">${PN[att]}</span> ${att===1?'attack':'attacks'} from ${fronts} border${fronts>1?'s':''}`;
-  const rowA=document.getElementById('dA'),rowD=document.getElementById('dD');
-  const pool=p=>p===att?attPool(att,c):defPool(c,def);
-  const setCounts=()=>{document.getElementById('nA').textContent=pool(1);document.getElementById('nD').textContent=pool(2);};
-  setCounts();document.getElementById('bR').textContent='';
-  const dropFrom=(x,p)=>{const idx=x.plots.map((v,i)=>v===p?i:-1).filter(i=>i>=0);x.plots[idx[Math.floor(Math.random()*idx.length)]]=0;};
-  const biggest=(list,p)=>list.filter(x=>cnt(x,p)).sort((u,v)=>cnt(v,p)-cnt(u,p)||Math.random()-.5)[0];
-  const loseAtt=()=>{const x=biggest(c.nb,att);if(x)dropFrom(x,att);};            // attacker bleeds from its strongest border
-  const loseDef=()=>{if(cnt(c,def))dropFrom(c,def);else{const x=biggest(c.nb,def);if(x)dropFrom(x,def);}}; // defender: target first
-  const round=()=>{
-    const a=pool(att),d=pool(def);
-    if(!a||!d){const w=a?att:def;
-      if(w===att){const i=c.plots.findIndex(v=>!v);if(i>=0){c.plots[i]=att;GAME.last={p:att,c,i};}}
-      document.getElementById('bR').innerHTML=w===att?`<b style="color:${PC[att]}">${PN[att]}</b> ${att===1?'capture':'captures'} ${c.n}`
-        :`<b style="color:${PC[def]}">${PN[def]}</b> ${def===1?'hold':'holds'} ${c.n}`+(cnt(c,def)?'':' · territory left empty');
-      (w===1?SFX.win:SFX.lose)();
-      logEv(att,`Attacked <b>${c.n}</b> · ${a0} vs ${d0} dice → `+(w===att?`<b style="color:${PC[att]}">captured</b>`:`<b style="color:${PC[def]}">repelled</b>`)+` · lost ${tla}, destroyed ${tld}`);
-      refresh();return setTimeout(()=>{bEl.classList.remove('on');GAME.battle=null;refresh();done(w);},T(1000));}
-    const A=roll(Math.max(2,a)),D=roll(Math.max(2,d)),rows={[att]:A,[def]:D};
-    SFX.dice();let t=0;const flick=setInterval(()=>{
-      rowA.innerHTML=rows[1].map(()=>dieHTML(1+Math.floor(Math.random()*6),1,'roll')).join('');
-      rowD.innerHTML=rows[2].map(()=>dieHTML(1+Math.floor(Math.random()*6),2,'roll')).join('');
-      if(++t>5){clearInterval(flick);settle();}},T(65));
-    const settle=()=>{
-      const n=Math.min(A.length,D.length),res={1:[],2:[]};let la=0,ld=0;
-      for(let k=0;k<n;k++){if(la>=a||ld>=d)continue;
-        if(A[k]>D[k]){ld++;res[att][k]='win';res[def][k]='lose';}else{la++;res[att][k]='lose';res[def][k]='win';}}
-      rowA.innerHTML=rows[1].map((v,k)=>dieHTML(v,1,res[1][k]||'idle')).join('');
-      rowD.innerHTML=rows[2].map((v,k)=>dieHTML(v,2,res[2][k]||'idle')).join('');
-      setTimeout(()=>{for(let k=0;k<la;k++)loseAtt();for(let k=0;k<ld;k++)loseDef();tla+=la;tld+=ld;if(la||ld)SFX.hit();setCounts();refresh();buzz(8);setTimeout(round,T(260));},T(620));
-    };
-  };
-  setTimeout(round,T(380));
+  document.getElementById('bS').textContent=`${FAM[c.fam].n} · attack from ${fronts} border${fronts>1?'s':''}`;
+  document.getElementById('tagA').innerHTML=`<b style="color:${PC[att]}">${PN[att]}</b> attacks`;
+  document.getElementById('tagD').innerHTML=`<b style="color:${PC[def]}">${PN[def]}</b> defends`;
+  document.getElementById('sideA').style.setProperty('--pc',PC[att]);document.getElementById('sideD').style.setProperty('--pc',PC[def]);
+  ['bTally','bR'].forEach(id=>document.getElementById(id).innerHTML='');document.getElementById('bCall').className='ar-call';
+  lanesEl.innerHTML='';
+  const setBars=()=>{const a=attPool(att,c),d=defPool(c,def);
+    document.getElementById('nA').textContent=a;document.getElementById('nD').textContent=d;
+    for(const[id,v,v0]of[['sideA',a,a0],['sideD',d,d0]]){const s=document.getElementById(id);const pct=v0?100*v/v0:0;
+      s.querySelector('.fill').style.width=pct+'%';s.querySelector('.ghost').style.width=pct+'%';}};
+  bEl.querySelectorAll('.fill,.ghost').forEach(e=>{e.style.transition='none';e.style.width='100%';void e.offsetWidth;e.style.transition='';});
+  setBars();syncBset();
+  bEl.classList.add('on','opening');SFX.vs();const stopDrone=SFX.drone();const restoreCam=cameraTo(c);
+  try{
+  await wait(T(450));fxTracers(c,att);await wait(T(650));bEl.classList.remove('opening');
+
+  while(attPool(att,c)&&defPool(c,def)){
+    const a=attPool(att,c),d=defPool(c,def);rnd++;
+    if(d===1&&!stand){stand=true;callout('LAST STAND',PC[def]);SFX.call();await wait(T(900));}
+    const A=roll(Math.max(2,a)),D=roll(Math.max(2,d)),n=Math.min(A.length,D.length),m=Math.max(A.length,D.length);
+    const out=[];{let la=0,ld=0;for(let k=0;k<n;k++){if(la>=a||ld>=d)break;if(A[k]>D[k]){ld++;out.push(att)}else{la++;out.push(def)}}}
+    const decisive=(out.filter(x=>x===def).length>=a||out.filter(x=>x===att).length>=d)?out.length-1:-1;
+    // lay out the lanes: attacker on top, defender below, each column is a pair
+    lanesEl.style.setProperty('--ds',m>16?'18px':m>10?'22px':'27px');
+    lanesEl.innerHTML=[...Array(m)].map((_,k)=>`<div class="lane">${k<A.length?die3(PC[att]):'<span class="die3 empty"></span>'}<span class="clash"></span>${k<D.length?die3(PC[def]):'<span class="die3 empty"></span>'}</div>`).join('');
+    document.getElementById('bTally').innerHTML=`Round ${rnd}`;
+    // tumble & land
+    const lanes=[...lanesEl.children],dur=T(640);
+    lanes.forEach((ln,k)=>{const top=ln.children[0].querySelector('.cube'),bot=ln.children[2].querySelector('.cube');
+      [[top,A[k]],[bot,D[k]]].forEach(([cube,v],j)=>{if(!cube)return;
+        cube.style.transition='none';cube.style.transform=`rotateX(${Math.random()*360}deg) rotateY(${Math.random()*360}deg)`;void cube.offsetWidth;
+        const dl=k*T(38)+j*T(18);cube.style.transition=`transform ${dur}ms cubic-bezier(.15,.75,.25,1.08) ${dl}ms`;
+        cube.style.transform=`rotateX(${FACE[v][0]+720}deg) rotateY(${FACE[v][1]+720}deg)`;
+        cube.parentElement.style.animationDuration=dur+'ms';cube.parentElement.style.animationDelay=dl+'ms';cube.parentElement.classList.add('drop');
+        if(k<8)setTimeout(()=>SFX.land(),dl+dur*.8);});});
+    await wait(dur+m*T(38)+T(160));
+    // resolve the pairs one at a time, highest first
+    let ra=0,rd=0;
+    for(let k=0;k<out.length;k++){
+      const ln=lanes[k],top=ln.children[0],clash=ln.children[1],bot=ln.children[2],wa=out[k]===att,tie=A[k]===D[k];
+      const final=k===decisive;
+      if(final&&!BSET.reduce){lanesEl.classList.add('focusing');ln.classList.add('focus');SFX.heart();await wait(T(820));}
+      const win=wa?top:bot,lose=wa?bot:top,wcol=PC[out[k]],margin=Math.abs(A[k]-D[k]);
+      win.classList.add('win');lose.classList.add('lose');clash.style.setProperty('--wc',wcol);clash.classList.add(wa?'down':'up');
+      if(tie){bot.classList.add('shield');SFX.clang();}else SFX.clash(1+margin/2.5+(final?1:0));
+      sparks(ln,wcol,4+margin*2);quake(arIn,2+margin*1.4+(final?4:0));if(margin>=3||final)quake(svg,margin+(final?5:1));flash(final||margin>=4);
+      const site=wa?loseDef(c,def):loseAtt(c,att);if(wa){rd++;tld++;}else{ra++;tla++;}
+      if(site)fxBurst(site.x,site.y,PC[wa?def:att],false);
+      setBars();refresh();
+      if(!tie&&margin===5){callout('CRITICAL!',wcol);SFX.call();}
+      await wait(T(final?700:240));
+      if(final){ln.classList.remove('focus');lanesEl.classList.remove('focusing');}
+    }
+    lanes.slice(out.length).forEach(ln=>[ln.children[0],ln.children[2]].forEach(d=>d.classList.add('idle')));
+    document.getElementById('bTally').innerHTML=`Round ${rnd} · <span style="color:${PC[1]}">You −${att===1?ra:rd}</span> · <span style="color:${PC[2]}">${PN[2]} −${att===2?ra:rd}</span>`;
+    if(out.length>=2&&(ra===0||rd===0)&&decisive<0){callout('SWEEP!',PC[ra===0?att:def]);SFX.call();}
+    await wait(T(decisive>=0?380:760));
+  }
+  }catch(err){
+    if(err!==SKIP)throw err;
+    // Skip: resolve whatever is left of the battle instantly, same rules
+    while(attPool(att,c)&&defPool(c,def)){const a=attPool(att,c),d=defPool(c,def),A=roll(Math.max(2,a)),D=roll(Math.max(2,d));let la=0,ld=0;
+      for(let k=0;k<Math.min(A.length,D.length);k++){if(la>=a||ld>=d)break;if(A[k]>D[k])ld++;else la++;}
+      for(let k=0;k<la;k++)loseAtt(c,att);for(let k=0;k<ld;k++)loseDef(c,def);tla+=la;tld+=ld;}
+    lanesEl.classList.remove('focusing');bEl.classList.remove('opening');
+    document.getElementById('bTally').innerHTML=`Skipped · total losses: <span style="color:${PC[1]}">You −${att===1?tla:tld}</span> · <span style="color:${PC[2]}">${PN[2]} −${att===2?tla:tld}</span>`;
+  }
+  document.getElementById('bSkipBtn').disabled=true;
+  const w=attPool(att,c)?att:def,upset=w===att?a0<d0:d0<a0;
+  concludeBattle(c,att,w,a0,d0,tla,tld);
+  callout(upset?(w===att?'UPSET!':'VALIANT DEFENSE'):w===att?'CAPTURED':'REPELLED',PC[w],true);   // underdog defender holds → valiant defense
+  document.getElementById('bR').innerHTML=w===att?`<b style="color:${PC[att]}">${PN[att]}</b> ${att===1?'capture':'captures'} ${c.n}${upset?' against the odds':''}`
+    :`<b style="color:${PC[def]}">${PN[def]}</b> ${def===1?'hold':'holds'} ${c.n}`+(upset?' · a valiant defense':'')+(cnt(c,def)?'':' · territory left empty');
+  setBars();refresh();stopDrone();
+  await sleep(bSkip?1100:T(1500)+250);bSkip=false;
+  bEl.classList.remove('on');GAME.battle=null;if(restoreCam)restoreCam();refresh();
+  if(pendingToast){const t=pendingToast;pendingToast=null;toastText(t);}
+  done(w);
 }
 
 function finish(winner){
@@ -503,7 +718,7 @@ function renderTop(){
   go.classList.toggle('wait',!myTurn());
   const q=0;
   st.innerHTML=GAME.over?'<b>Game over</b> · start a new game to play again'
-    :GAME.battle?`<b style="color:#ffb347">Battle</b> · ${GAME.battle.n} · click the battle card to speed up`
+    :GAME.battle?`<b style="color:#ffb347">Battle</b> · ${GAME.battle.n} · press Skip battle to jump to the result`
     :GAME.turn===1?(GAME.busy?'Resolving…':`<b style="color:var(--you)">Your turn</b> · ${GAME.moves} move${GAME.moves===1?'':'s'} left · claim open sites, or drop on an <span style="color:var(--ai)">EvilDarthMonkey25 site</span> to attack (1 move)${q?` · ${q} battle${q>1?'s':''} queued`:''}`)
     :`<b style="color:var(--ai)">EvilDarthMonkey25 is moving…</b>${q?` · ${q} battle${q>1?'s':''} queued`:''}`;
 }
@@ -511,6 +726,7 @@ function renderTop(){
 /* ================= Exploded 2D view: the whole hierarchy as a radial tree (pan & zoom) ================= */
 // World (center) → 8 realm hubs → 64 territories → every site. Links are parent→child; selecting a territory also draws its globe borders.
 const svg=document.getElementById('svg'),vp=document.getElementById('vp'),mapEl=document.getElementById('map');
+vp.innerHTML='<g id="vpMap"></g><g id="fx" pointer-events="none"></g>';const vpMap=document.getElementById('vpMap'),fxL=document.getElementById('fx');
 // Layout is the globe itself, flattened: realms are spokes, rings 1–8 are circles (ring 1 nearest the center), sites ring their territory.
 // Drawn links: hierarchy (World→realm→territory→site) as colored strands, and EVERY border of the game graph:
 //   along a spoke (ring r ↔ r±1), around a ring (neighboring realms), across the near pole (ring 1 ↔ opposite ring 1),
@@ -586,7 +802,7 @@ function renderMap(){
       `<text text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="750" fill="#eef2f8">${c.e}</text></g>`;
     labels+=`<text class="tl" x="${c.x}" y="${c.y+LY.RP+20}" text-anchor="middle" font-size="12" font-weight="${sel?700:600}" fill="${sel?'#fff':ct?PC[ct]:'#a3acbf'}">${c.n}${canContest(1,c)&&!GAME.busy?' · attackable':lk?' · full':''}</text>`;
   });
-  vp.innerHTML=`<g>${grid}</g><g>${hier}</g><g>${borders}</g><g>${nodes}</g><g pointer-events="none">${labels}</g>`;
+  vpMap.innerHTML=`<g>${grid}</g><g>${hier}</g><g>${borders}</g><g>${nodes}</g><g pointer-events="none">${labels}</g>`;
 }
 
 /* ---- pan / zoom / pinch ---- */
@@ -597,8 +813,8 @@ function applyVP(){vp.setAttribute('transform',`translate(${VP.tx.toFixed(1)} ${
 function fitView(anim){const t=fitTarget();VP.min=t.s*.6;anim?animVP(t):(Object.assign(VP,t),applyVP());}
 function zoomAt(f,x,y){const s=clamp(VP.s*f,VP.min,4.5),k=s/VP.s;VP.tx=x-(x-VP.tx)*k;VP.ty=y-(y-VP.ty)*k;VP.s=s;applyVP();}
 let vpAnim=0;
-function animVP(t){cancelAnimationFrame(vpAnim);const f={...VP},t0=performance.now();
-  const step=now=>{const k=Math.min(1,(now-t0)/380),e=1-Math.pow(1-k,3);
+function animVP(t,dur=380){cancelAnimationFrame(vpAnim);const f={...VP},t0=performance.now();
+  const step=now=>{const k=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-k,3);
     VP.s=f.s+(t.s-f.s)*e;VP.tx=f.tx+(t.tx-f.tx)*e;VP.ty=f.ty+(t.ty-f.ty)*e;applyVP();if(k<1)vpAnim=requestAnimationFrame(step);};
   vpAnim=requestAnimationFrame(step);}
 function zoomTo(s,wx,wy){const W=innerWidth;s=clamp(s,VP.min,4.5);animVP({s,tx:W/2-wx*s,ty:GEO.cy-wy*s});}
@@ -922,7 +1138,8 @@ function toastMove(p,leaf){
   toast.innerHTML=badge(leaf.e,PC[p],true)+`<div><b style="color:${PC[p]}">${PN[p]}</b> ${p===1?'claim':'claims'} <b>${leaf.n}</b><small>${FAM[leaf.parent.fam].n} › ${leaf.parent.n} · ${cnt(leaf.parent,1)}–${cnt(leaf.parent,2)} of ${leaf.parent.plots.length} sites</small></div>`;
   toast.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('on'),2400);
 }
-function toastText(t){toast.innerHTML=`<div>${t}</div>`;toast.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('on'),2200);}
+let pendingToast=null;
+function toastText(t){if(GAME.battle){pendingToast=t;return;}toast.innerHTML=`<div>${t}</div>`;toast.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('on'),2200);}
 
 /* ================= Sound: synthesized with Web Audio (no files) ================= */
 const SFX=(()=>{
@@ -957,6 +1174,18 @@ const SFX=(()=>{
     bonus(){[784,988,1175,1568,1976].forEach((f,i)=>tone(f,.45,{vol:.08,at:i*.06}));noise(.7,{vol:.04,freq:7000,q:.4,type:'highpass',at:.05});},
     turn(){tone(587,.22,{vol:.07});tone(880,.34,{vol:.055,at:.08});},
     enemy(){tone(196,.28,{type:'triangle',vol:.07});tone(185,.34,{type:'triangle',vol:.05,at:.1});},
+    land(){noise(.03,{vol:.1,freq:2800+Math.random()*1200,q:3});tone(700+Math.random()*400,.035,{type:'triangle',vol:.03});},
+    clash(m){m=Math.min(4,m);noise(.1+.05*m,{vol:.12+.05*m,freq:520,q:.9,type:'lowpass'});tone(170-18*m,.2+.05*m,{type:'triangle',vol:.09+.03*m,slide:.5});tone(1500,.05,{type:'square',vol:.012*m});},
+    clang(){tone(1180,.55,{type:'triangle',vol:.06});tone(1770,.45,{vol:.04});tone(2640,.32,{vol:.025});noise(.08,{vol:.08,freq:5000,q:2});},
+    heart(){tone(62,.16,{vol:.24,slide:.7});tone(56,.16,{vol:.2,at:.24,slide:.7});},
+    vs(){noise(.4,{vol:.1,freq:900,q:.6});tone(98,.45,{type:'sawtooth',vol:.045,slide:2});tone(1960,.08,{type:'square',vol:.02,at:.32});},
+    call(){tone(660,.1,{type:'square',vol:.028});tone(990,.18,{type:'square',vol:.024,at:.06});},
+    boom(){noise(.6,{vol:.22,freq:180,q:.7,type:'lowpass'});tone(70,.7,{vol:.16,slide:.45});},
+    drone(){init();if(!on||!ac)return()=>{};const t=ac.currentTime,g=ac.createGain(),o1=ac.createOscillator(),o2=ac.createOscillator(),lp=ac.createBiquadFilter();
+      o1.type=o2.type='sawtooth';o1.frequency.value=55;o2.frequency.value=55.7;lp.type='lowpass';lp.frequency.setValueAtTime(160,t);lp.frequency.linearRampToValueAtTime(650,t+14);
+      g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.045,t+1.2);o1.connect(lp);o2.connect(lp);lp.connect(g);g.connect(master);o1.start();o2.start();
+      return()=>{const n=ac.currentTime;g.gain.cancelScheduledValues(n);g.gain.setValueAtTime(g.gain.value,n);g.gain.linearRampToValueAtTime(0,n+.7);
+        setTimeout(()=>{try{o1.stop();o2.stop();g.disconnect()}catch(_){}},800);};},
     intro(){                                   // original synth score: drone → brass stab at the title → slow pad under the crawl
       init();if(!on||!ac)return()=>{};if(ac.state==='suspended')ac.resume();
       const t0=ac.currentTime+.05,bus=ac.createGain(),lp=ac.createBiquadFilter(),nodes=[];
@@ -1056,6 +1285,8 @@ const INTRO=(()=>{
   return{show,close,skip};
 })();
 addEventListener('resize',resize);
+document.getElementById('setRM').onchange=e=>{BSET.reduce=e.target.checked;saveB();};
+syncBset();
 resize();newGame();if(!INTRO.skip)INTRO.show();
 })();
 </script>
