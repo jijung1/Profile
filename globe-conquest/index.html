@@ -63,6 +63,25 @@ button{font-family:inherit}
 .die.lose{opacity:.3;transform:scale(.9)}
 .die.idle{opacity:.55}
 .bres{font-size:13px;margin-top:6px;min-height:18px}
+.sp small{font-size:11.5px;font-weight:600;color:var(--mute);max-width:42vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tb.ic{width:34px;padding:7px 0;text-align:center;font-size:14px}
+.bl{width:auto!important;min-width:44px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist{position:fixed;right:12px;top:max(66px,calc(env(safe-area-inset-top) + 56px));bottom:max(64px,calc(env(safe-area-inset-bottom) + 54px));width:min(320px,calc(100vw - 24px));z-index:44;
+  background:#141925f5;border:1px solid #2a3245;border-radius:18px;padding:12px 14px;overflow:auto;transform:translateX(calc(100% + 24px));transition:transform .4s cubic-bezier(.2,.9,.25,1.05);
+  box-shadow:0 20px 50px -18px #000e}
+.hist.on{transform:none}
+.hhd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.hhd b{font-size:14px}
+.hhd button,.hclose{background:none;border:0;color:var(--mute);font-size:15px;cursor:pointer;padding:4px 6px;border-radius:8px}
+.ht{border-top:1px solid #232a3a;padding:10px 0 4px}.hh{font-weight:700;font-size:13px;margin-bottom:4px}
+.ht ul{margin:0;padding-left:16px;font-size:12.5px;color:#c7cedd;line-height:1.55}.ht li{margin:2px 0}
+.he{color:var(--mute);font-size:12.5px;padding:4px 0}
+.bon{color:#ffd36b;font-weight:700}
+.help{position:fixed;inset:0;z-index:70;display:none;place-items:center;background:rgba(5,7,12,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:16px}
+.help.on{display:grid}
+.hcard{position:relative;background:#151a26;border:1px solid #2c3448;border-radius:22px;padding:22px 26px;max-width:620px;max-height:calc(100vh - 32px);overflow:auto;animation:pop .4s cubic-bezier(.2,.9,.25,1.2);font-size:13.5px;line-height:1.6;color:#cfd6e6}
+.hcard h2{margin:0 0 4px;font-size:21px;color:#fff;letter-spacing:-.02em}.hcard h3{margin:16px 0 4px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.hcard ul{margin:0;padding-left:18px}.hcard li{margin:3px 0}.hcard .lead{margin:4px 0 0;color:#aeb7c9}
+.hclose{position:absolute;right:14px;top:14px}
 .bd{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-weight:760;font-size:14px;letter-spacing:.02em;flex:none}
 .bd.sg{background:#111725}
 .crumbs i{width:8px;height:8px;border-radius:50%;display:inline-block}
@@ -76,6 +95,9 @@ button{font-family:inherit}
 @keyframes ring{0%{transform:scale(.9);opacity:.9}100%{transform:scale(1.3);opacity:0}}
 .go:active{transform:scale(.95)}
 .go.wait{filter:grayscale(.8) brightness(.6);pointer-events:none}
+body.mapOn .go{opacity:.2}
+body.mapOn .go:hover{opacity:.35}
+.go{transition:transform .14s,filter .3s,opacity .3s}
 .go.wait::before{animation:none;opacity:0}
 .go .ic{line-height:1}
 .status{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:6;
@@ -123,27 +145,30 @@ button{font-family:inherit}
 </head>
 <body>
 <div class="top">
-  <div class="brand"><b>Globe Conquest</b><small>5 moves a turn · claim sites · contest rivals · hold realms</small></div>
+  <div class="brand"><b>Globe Conquest</b><small>5 moves a turn · claim sites · attack borders · hold realms</small></div>
   <div class="score">
-    <div class="sp you" id="spYou"><i style="background:var(--you)"></i><span id="scYou">0</span></div>
-    <div class="sp ai" id="spAi"><i style="background:var(--ai)"></i><span id="scAi">0</span></div>
+    <div class="sp you" id="spYou"><i style="background:var(--you)"></i><small>You</small><span id="scYou">0</span></div>
+    <div class="sp ai" id="spAi"><i style="background:var(--ai)"></i><small>EvilDarthMonkey25</small><span id="scAi">0</span></div>
     <span class="round" id="round"></span><span class="mv" id="mv" title="Moves left this turn"></span>
   </div>
   <div class="tools">
+    <button class="tb ic" id="helpBtn" title="How to play">?</button>
+    <button class="tb ic" id="histBtn" title="Last 3 turns">☰</button>
+    <button class="tb ic" id="snd" title="Sound">♪</button>
     <button class="tb on" id="tgMap">◎ Exploded view</button>
     <button class="tb end" id="endTurn">End turn ›</button><button class="tb" id="newGame">New game</button>
   </div>
 </div>
 
 <div id="map"><svg id="svg"><g id="vp"></g></svg>
-  <div class="legend"><span style="color:var(--you)">●</span> You &nbsp;<span style="color:var(--ai)">●</span> AI &nbsp;<span style="color:#5d667b">●</span> Unclaimed<br>Colored strands: realm → territory → site<br>Light lines: borders · dashed: crossings via near pole / far side<br>Drag to pan · scroll or pinch to zoom · click to inspect</div>
+  <div class="legend"><span style="color:var(--you)">●</span> You &nbsp;<span style="color:var(--ai)">●</span> EvilDarthMonkey25 &nbsp;<span style="color:#5d667b">●</span> Unclaimed<br>Colored strands: realm → territory → site<br>Light lines: borders · dashed: crossings via near pole / far side<br>Drag to pan · scroll or pinch to zoom · click to inspect</div>
   <div class="mapui" id="mapui"><button data-z="in" title="Zoom in">+</button><button data-z="out" title="Zoom out">−</button><button data-z="fit" title="Fit all">⤢</button></div></div>
 
 <div class="dock" id="dock"><button class="go" id="go"><span class="ic"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9.2"/><ellipse cx="12" cy="12" rx="4.2" ry="9.2"/><path d="M2.8 12h18.4M4.6 7h14.8M4.6 17h14.8"/></svg></span><span class="lb">Hold &amp; drag</span></button></div>
 <div class="info" id="info"></div>
 <div class="battle" id="battle" title="Click to speed up"><div class="bh"><b id="bT"></b><small id="bS"></small></div>
   <div class="brow"><span class="bl" style="color:var(--you)">You <b id="nA"></b></span><div class="dice" id="dA"></div></div>
-  <div class="brow"><span class="bl" style="color:var(--ai)">AI <b id="nD"></b></span><div class="dice" id="dD"></div></div>
+  <div class="brow"><span class="bl" style="color:var(--ai)">EvilDarthMonkey25 <b id="nD"></b></span><div class="dice" id="dD"></div></div>
   <div class="bres" id="bR"></div></div>
 <div class="status" id="status"></div>
 
@@ -152,6 +177,29 @@ button{font-family:inherit}
 <div id="stage"></div>
 <div class="crumbs" id="crumbs"></div>
 <div class="toast" id="toast"></div>
+<aside class="hist" id="hist"><div class="hhd"><b>Last 3 turns</b><button id="histClose" aria-label="Close">✕</button></div><div id="histList"></div></aside>
+<div class="help" id="help"><div class="hcard">
+  <button class="hclose" aria-label="Close">✕</button>
+  <h2>How to play</h2>
+  <p class="lead">Out-expand and out-fight <b style="color:var(--ai)">EvilDarthMonkey25</b> across 64 territories in 8 realms. Highest score after 20 rounds wins, or wipe out every enemy site.</p>
+  <h3>Your turn</h3>
+  <ul><li>You get <b>5 moves</b> per turn, plus bonus moves for dominance (below). The dots next to the round show what's left.</li>
+  <li><b>Claim</b> an open site (1 move). You can claim in your own territories, or in empty territories that border one of yours.</li>
+  <li><b>Attack</b> an enemy territory that borders yours (1 move). The battle plays out immediately.</li>
+  <li>A territory has one owner at a time. Press <b>End turn ›</b> to pass early.</li></ul>
+  <h3>Battles</h3>
+  <ul><li>Attacker dice = your sites in territories bordering the target. Defender dice = their sites in the target plus their bordering territories. Minimum 2 dice each.</li>
+  <li>Highest dice are compared in pairs; <b>ties go to the defender</b>. Each lost pair removes one site from the loser.</li>
+  <li>The fight continues until one side runs out. If the attacker wins, they capture the territory with 1 site.</li></ul>
+  <h3>Scoring</h3>
+  <ul><li>+1 per site · +3 per territory you own · +5 per realm where you own at least 5 of 8 territories.</li>
+  <li><b>Ring dominance:</b> own all 8 territories of a ring → <b>+8 points</b> and <b>+1 move per turn</b>.</li>
+  <li><b>Realm dominance:</b> own all 8 territories of a realm → <b>+10 points</b> and <b>+1 move per turn</b>. Bonus moves cap at +3.</li></ul>
+  <h3>Controls</h3>
+  <ul><li>Hold the center button and drag to aim; keep dragging to roll around the globe and wrap to the far side. Release on a territory to enter it, release on a site to claim or attack.</li>
+  <li>Go back: tap outside the globe, use the breadcrumb at the top, press Esc, or roll to the far side (↩).</li>
+  <li>Exploded view: drag to pan, scroll or pinch to zoom, click anything to inspect. Light lines are borders; dashed arcs cross the near pole and the far side.</li></ul>
+</div></div>
 <div class="over" id="over"><div class="card"><h2 id="ovT"></h2><p id="ovP"></p><button id="ovB">Play again</button></div></div>
 
 <script>
@@ -162,7 +210,7 @@ const ORDER=[6,7,0,1,2,3,4,5];
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const EMOJI='"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
 const UI='system-ui,-apple-system,"Segoe UI",sans-serif';
-const PC=['#5d667b','#3fa9ff','#ff4d6d'],PN=['','You','AI'];
+const PC=['#5d667b','#3fa9ff','#ff4d6d'],PN=['','You','EvilDarthMonkey25'];
 
 /* ================= Content: 8 realms × 8 territories × 8–12 sites ================= */
 // Opposite realms sit across the globe: Terran↔Abyssal, Dune↔Glacial, Infested↔Verdant, Ascendant↔Iron
@@ -232,75 +280,87 @@ CATS.forEach(c=>{const s=c.step,r=c.ring,o=[];
 
 /* ================= Game rules ================= */
 const MOVES=5,SEED=20;
-const GAME={turn:1,round:1,max:20,over:false,last:null,busy:false,moves:MOVES,queue:[],battle:null};
+const GAME={turn:1,round:1,max:20,over:false,last:null,busy:false,moves:MOVES,battle:null};
 const cnt=(c,p)=>{let n=0;for(const v of c.plots)if(v===p)n++;return n};
 const ctrl=c=>{const a=cnt(c,1),b=cnt(c,2);return a>b?1:b>a?2:0};
 const locked=c=>c.plots.every(v=>v);                       // full: no open sites left
 const total=p=>CATS.reduce((a,c)=>a+cnt(c,p),0);
+// one owner per territory: you can only claim in empty territories or your own
 function reach(p){const S=new Set();
   for(const c of CATS)if(cnt(c,p)){S.add(c);for(const x of c.nb)S.add(x);}
-  for(const c of[...S])if(locked(c))S.delete(c);return S;}
+  for(const c of[...S])if(locked(c)||cnt(c,3-p))S.delete(c);return S;}
+// battle strength: attacker = its sites in territories bordering the target; defender = sites in the target + its bordering territories
+const attPool=(p,c)=>c.nb.reduce((s,x)=>s+cnt(x,p),0);
+const defPool=(c,p)=>cnt(c,p)+attPool(p,c);
 function famCount(p){let f=0;FAM.forEach((_,fi)=>{let k=0;for(const c of CATS)if(c.fam===fi&&ctrl(c)===p)k++;if(k>=5)f++;});return f;}
-function score(p){let pl=0,rg=0;for(const c of CATS){pl+=cnt(c,p);if(ctrl(c)===p)rg++;}return pl+3*rg+5*famCount(p);}
+function score(p){let pl=0,rg=0;for(const c of CATS){pl+=cnt(c,p);if(ctrl(c)===p)rg++;}return pl+3*rg+5*famCount(p)+RING_BONUS*fullRings(p).length+REALM_BONUS*fullRealms(p).length;}
 function moves(p){const out=[];for(const c of reach(p))c.plots.forEach((v,i)=>{if(!v)out.push([c,i])});return out;}
-const queued=c=>GAME.queue.some(q=>q.c===c);
+const queued=()=>false;
 let REACH=[null,new Set(),new Set()];
 
 function newGame(){
   for(const c of CATS)c.plots.fill(0);
-  Object.assign(GAME,{turn:1,round:1,over:false,last:null,busy:false,moves:MOVES,queue:[],battle:null});
+  Object.assign(GAME,{turn:1,round:1,over:false,last:null,busy:false,moves:MOVES,maxMoves:MOVES,battle:null});LOG=[];
   // random seed: 20 sites each, anywhere on the board
   const all=[];for(const c of CATS)c.plots.forEach((_,i)=>all.push([c,i]));
   for(let i=all.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[all[i],all[j]]=[all[j],all[i]];}
-  all.slice(0,SEED).forEach(([c,i])=>c.plots[i]=1);all.slice(SEED,SEED*2).forEach(([c,i])=>c.plots[i]=2);
-  document.getElementById('over').classList.remove('on');document.getElementById('battle').classList.remove('on');hideInfo();refresh();
+  const need={1:SEED,2:SEED};let p=1;                        // alternate placements; never seed into the rival's territory
+  for(const[c,i]of all){if(!need[1]&&!need[2])break;if(!need[p])p=3-p;
+    if(cnt(c,3-p)){const q=3-p;if(need[q]&&!cnt(c,p)){c.plots[i]=q;need[q]--;}continue;}
+    c.plots[i]=p;need[p]--;p=3-p;}
+  document.getElementById('over').classList.remove('on');document.getElementById('battle').classList.remove('on');hideInfo();checkBonuses(true);startTurnLog(1);refresh();
 }
-function refresh(){REACH=[null,reach(1),reach(2)];if(SEL){SEL.c?showInfo(SEL.c,SEL.leaf):showRealm(SEL.f);return refreshRest();}renderMap();refreshRest();}
+function refresh(){REACH=[null,reach(1),reach(2)];if(LOG.length)checkBonuses(false);if(SEL){SEL.c?showInfo(SEL.c,SEL.leaf):showRealm(SEL.f);return refreshRest();}renderMap();refreshRest();}
 function refreshRest(){renderTop();for(const L of stack)L.dirty=true;kick();}
 function claim(p,c,i){c.plots[i]=p;GAME.last={p,c,i};refresh();}
 const myTurn=()=>GAME.turn===1&&!GAME.over&&!GAME.busy&&GAME.moves>0;
-function canSettle(c,i){return myTurn()&&!c.plots[i]&&REACH[1].has(c);}
-function canContest(p,c){return GAME.turn===p&&!GAME.over&&GAME.moves>0&&cnt(c,p)>0&&cnt(c,3-p)>0&&!queued(c);}
+function canSettle(c,i){return myTurn()&&!c.plots[i]&&!cnt(c,2)&&REACH[1].has(c);}
+function canContest(p,c){return GAME.turn===p&&!GAME.over&&!GAME.battle&&GAME.moves>0&&cnt(c,3-p)>0&&attPool(p,c)>0;}
 
 /* ---- moves ---- */
 function spendMove(){GAME.moves--;renderTop();for(const L of stack)L.dirty=true;kick();
   if(GAME.turn===1&&GAME.moves<=0)setTimeout(finishPlayerTurn,450);}
-function playerSettled(leaf){claim(1,leaf.parent,leaf.i);toastMove(1,leaf);spendMove();}
-function queueContest(p,c){if(!canContest(p,c))return false;GAME.queue.push({c,p});
-  toastText(`<b style="color:${PC[p]}">${PN[p]}</b> ${p===1?'contest':'contests'} <b>${c.n}</b> · ${cnt(c,p)} vs ${cnt(c,3-p)} sites · battle at end of turn`);
-  refresh();spendMove();return true;}
+function playerSettled(leaf){claim(1,leaf.parent,leaf.i);toastMove(1,leaf);SFX.claim();logEv(1,`Claimed <b>${leaf.n}</b> in ${leaf.parent.n}`);spendMove();}
+function attack(p,c,after){
+  if(!canContest(p,c))return false;
+  GAME.moves--;GAME.busy=true;renderTop();
+  battle(c,p,()=>{GAME.busy=p===2;refresh();if(checkOver())return;
+    if(after)after();else if(p===1&&GAME.moves<=0)setTimeout(finishPlayerTurn,350);});
+  return true;
+}
 function finishPlayerTurn(){
   if(GAME.turn!==1||GAME.busy||GAME.over)return;
-  GAME.busy=true;if(stack.length)closeAll(true);renderTop();
-  runBattles(()=>{GAME.busy=false;nextTurn();});
+  if(stack.length)closeAll(true);nextTurn();
 }
 document.getElementById('endTurn').onclick=()=>finishPlayerTurn();
 function nextTurn(){
   if(checkOver())return;
   GAME.turn=GAME.turn===1?2:1;if(GAME.turn===1)GAME.round++;
-  GAME.moves=MOVES;GAME.queue=[];
+  GAME.moves=GAME.maxMoves=MOVES+extraMoves(GAME.turn);
   if(checkOver())return;
-  refresh();
+  startTurnLog(GAME.turn);if(GAME.maxMoves>MOVES)logEv(GAME.turn,`<span class="bon">+${GAME.maxMoves-MOVES} bonus move${GAME.maxMoves-MOVES>1?'s':''}</span> from dominance`);
+  refresh();GAME.turn===1?SFX.turn():SFX.enemy();
   if(GAME.turn===2)aiTurn();
 }
 function checkOver(){
   const a=total(1),b=total(2);
-  if(!a||!b||GAME.round>GAME.max||(!moves(1).length&&!moves(2).length&&!CATS.some(c=>cnt(c,1)&&cnt(c,2)))){finish(!a?2:!b?1:0);return true;}
+  const canAtk=p=>CATS.some(c=>cnt(c,3-p)&&attPool(p,c));
+  if(!a||!b||GAME.round>GAME.max||(!moves(1).length&&!moves(2).length&&!canAtk(1)&&!canAtk(2))){finish(!a?2:!b?1:0);return true;}
   return false;
 }
 
-/* ---- AI: 5 moves, then its battles ---- */
+/* ---- Opponent AI: 5 moves, then its battles ---- */
 function simBattle(a,d){while(a>0&&d>0){const A=roll(Math.max(2,a)),D=roll(Math.max(2,d));
   for(let k=0;k<Math.min(A.length,D.length)&&a>0&&d>0;k++){if(A[k]>D[k])d--;else a--;}}return a>0?1:2;}
 const roll=n=>Array.from({length:n},()=>1+Math.floor(Math.random()*6)).sort((x,y)=>y-x);
 function winProb(a,d){let w=0;for(let i=0;i<160;i++)if(simBattle(a,d)===1)w++;return w/160;}
 function aiPick(){
   let best=null,bv=-1e9;
-  for(const c of CATS){const a=cnt(c,2),d=cnt(c,1);
-    if(a&&d&&!queued(c)){const pw=winProb(a,d),v=pw*(d*1.2+(ctrl(c)===1?3:0)+1.5)-(1-pw)*a*1.1;if(v>bv){bv=v;best={t:'contest',c};}}}
+  for(const c of CATS){if(!cnt(c,1))continue;const a=attPool(2,c),d=defPool(c,1);
+    if(a){const pw=winProb(a,d),v=pw*(cnt(c,1)*1.3+4+1)-(1-pw)*a*1.2;if(v>bv){bv=v;best={t:'attack',c};}}}
   const base=score(2)-score(1),r0=reach(2).size;
   for(const[c,i]of moves(2)){c.plots[i]=2;
-    const v=(score(2)-score(1)-base)+.35*(reach(2).size-r0)+(queued(c)?1.2:0)+.9*cnt(c,1)/c.plots.length+Math.random()*.45;
+    const v=(score(2)-score(1)-base)+.35*(reach(2).size-r0)+.9*cnt(c,1)/c.plots.length+Math.random()*.45;
     c.plots[i]=0;if(v>bv){bv=v;best={t:'claim',c,i};}}
   return best;
 }
@@ -308,11 +368,11 @@ function aiTurn(){
   GAME.busy=true;renderTop();
   const step=()=>{
     if(GAME.over)return;
-    if(GAME.moves<=0){runBattles(()=>{GAME.busy=false;nextTurn();});return;}
+    if(GAME.moves<=0){GAME.busy=false;nextTurn();return;}
     const m=aiPick();
     if(!m){GAME.moves=0;renderTop();return setTimeout(step,300);}
-    if(m.t==='claim'){claim(2,m.c,m.i);toastMove(2,m.c.children[m.i]);GAME.moves--;renderTop();}
-    else if(!queueContest(2,m.c)){GAME.moves--;renderTop();}   // queueContest spends the move
+    if(m.t==='claim'){claim(2,m.c,m.i);toastMove(2,m.c.children[m.i]);SFX.enemyClaim();logEv(2,`Claimed <b>${m.c.children[m.i].n}</b> in ${m.c.n}`);GAME.moves--;renderTop();}
+    else{if(!attack(2,m.c,()=>setTimeout(step,450))){GAME.moves--;renderTop();setTimeout(step,300);}return;}
     setTimeout(step,520);
   };
   setTimeout(step,650);
@@ -323,51 +383,52 @@ const bEl=document.getElementById('battle');let bFast=false;
 bEl.addEventListener('click',()=>{bFast=true;});
 const PIPS={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
 const dieHTML=(v,p,cls='')=>`<span class="die ${cls}" style="--pc:${PC[p]}">${[...Array(9)].map((_,i)=>`<i${PIPS[v].includes(i)?' class="on"':''}></i>`).join('')}</span>`;
-function runBattles(done){
-  const list=GAME.queue.slice();GAME.queue=[];bFast=false;
-  const next=()=>{const b=list.shift();if(!b){bEl.classList.remove('on');GAME.battle=null;refresh();return setTimeout(done,bFast?60:250);}
-    const att=b.p,def=3-att;if(!cnt(b.c,att)||!cnt(b.c,def))return next();
-    battle(b.c,att,def,next);};
-  next();
-}
-function battle(c,att,def,done){
-  GAME.battle=c;refresh();bEl.classList.add('on');toast.classList.remove('on');
+function battle(c,att,done){
+  const def=3-att;bFast=false;GAME.battle=c;let tla=0,tld=0;const a0=attPool(att,c),d0=defPool(c,def);refresh();bEl.classList.add('on');toast.classList.remove('on');
   const T=k=>bFast?k*.2:k;
+  const fronts=c.nb.filter(x=>cnt(x,att)).length;
   document.getElementById('bT').textContent=c.n;
-  document.getElementById('bS').innerHTML=`${FAM[c.fam].n} · <span style="color:${PC[att]}">${PN[att]}</span> ${att===1?'attack':'attacks'}`;
+  document.getElementById('bS').innerHTML=`${FAM[c.fam].n} · <span style="color:${PC[att]}">${PN[att]}</span> ${att===1?'attack':'attacks'} from ${fronts} border${fronts>1?'s':''}`;
   const rowA=document.getElementById('dA'),rowD=document.getElementById('dD');
-  const setCounts=()=>{document.getElementById('nA').textContent=cnt(c,1);document.getElementById('nD').textContent=cnt(c,2);};
+  const pool=p=>p===att?attPool(att,c):defPool(c,def);
+  const setCounts=()=>{document.getElementById('nA').textContent=pool(1);document.getElementById('nD').textContent=pool(2);};
   setCounts();document.getElementById('bR').textContent='';
-  const lose=p=>{const idx=c.plots.map((v,i)=>v===p?i:-1).filter(i=>i>=0);c.plots[idx[Math.floor(Math.random()*idx.length)]]=0;};
+  const dropFrom=(x,p)=>{const idx=x.plots.map((v,i)=>v===p?i:-1).filter(i=>i>=0);x.plots[idx[Math.floor(Math.random()*idx.length)]]=0;};
+  const biggest=(list,p)=>list.filter(x=>cnt(x,p)).sort((u,v)=>cnt(v,p)-cnt(u,p)||Math.random()-.5)[0];
+  const loseAtt=()=>{const x=biggest(c.nb,att);if(x)dropFrom(x,att);};            // attacker bleeds from its strongest border
+  const loseDef=()=>{if(cnt(c,def))dropFrom(c,def);else{const x=biggest(c.nb,def);if(x)dropFrom(x,def);}}; // defender: target first
   const round=()=>{
-    const a=cnt(c,att),d=cnt(c,def);
+    const a=pool(att),d=pool(def);
     if(!a||!d){const w=a?att:def;
-      document.getElementById('bR').innerHTML=`<b style="color:${PC[w]}">${PN[w]}</b> ${w===1?'hold':'holds'} ${c.n}`;
-      refresh();return setTimeout(done,T(900));}
-    const A=roll(Math.max(2,a)),D=roll(Math.max(2,d));
-    const rows={[att]:A,[def]:D};
-    let t=0;const flick=setInterval(()=>{               // tumble
+      if(w===att){const i=c.plots.findIndex(v=>!v);if(i>=0){c.plots[i]=att;GAME.last={p:att,c,i};}}
+      document.getElementById('bR').innerHTML=w===att?`<b style="color:${PC[att]}">${PN[att]}</b> ${att===1?'capture':'captures'} ${c.n}`
+        :`<b style="color:${PC[def]}">${PN[def]}</b> ${def===1?'hold':'holds'} ${c.n}`+(cnt(c,def)?'':' · territory left empty');
+      (w===1?SFX.win:SFX.lose)();
+      logEv(att,`Attacked <b>${c.n}</b> · ${a0} vs ${d0} dice → `+(w===att?`<b style="color:${PC[att]}">captured</b>`:`<b style="color:${PC[def]}">repelled</b>`)+` · lost ${tla}, destroyed ${tld}`);
+      refresh();return setTimeout(()=>{bEl.classList.remove('on');GAME.battle=null;refresh();done(w);},T(1000));}
+    const A=roll(Math.max(2,a)),D=roll(Math.max(2,d)),rows={[att]:A,[def]:D};
+    SFX.dice();let t=0;const flick=setInterval(()=>{
       rowA.innerHTML=rows[1].map(()=>dieHTML(1+Math.floor(Math.random()*6),1,'roll')).join('');
       rowD.innerHTML=rows[2].map(()=>dieHTML(1+Math.floor(Math.random()*6),2,'roll')).join('');
       if(++t>5){clearInterval(flick);settle();}},T(65));
     const settle=()=>{
       const n=Math.min(A.length,D.length),res={1:[],2:[]};let la=0,ld=0;
-      for(let k=0;k<n;k++){if(la>=a||ld>=d){res[att][k]=res[def][k]='';continue;}
+      for(let k=0;k<n;k++){if(la>=a||ld>=d)continue;
         if(A[k]>D[k]){ld++;res[att][k]='win';res[def][k]='lose';}else{la++;res[att][k]='lose';res[def][k]='win';}}
       rowA.innerHTML=rows[1].map((v,k)=>dieHTML(v,1,res[1][k]||'idle')).join('');
       rowD.innerHTML=rows[2].map((v,k)=>dieHTML(v,2,res[2][k]||'idle')).join('');
-      setTimeout(()=>{for(let k=0;k<la;k++)lose(att);for(let k=0;k<ld;k++)lose(def);setCounts();refresh();buzz(8);setTimeout(round,T(260));},T(620));
+      setTimeout(()=>{for(let k=0;k<la;k++)loseAtt();for(let k=0;k<ld;k++)loseDef();tla+=la;tld+=ld;if(la||ld)SFX.hit();setCounts();refresh();buzz(8);setTimeout(round,T(260));},T(620));
     };
   };
-  setTimeout(round,T(350));
+  setTimeout(round,T(380));
 }
 
 function finish(winner){
   GAME.over=true;GAME.busy=false;refresh();
-  const a=score(1),b=score(2),w=winner||(a>b?1:a<b?2:0);
+  const a=score(1),b=score(2),w=winner||(a>b?1:a<b?2:0);setTimeout(()=>(w===1?SFX.win:SFX.lose)(),200);
   document.getElementById('ovT').textContent=w===1?'Victory':w===2?'Defeat':'Draw';
   const rg=p=>CATS.filter(c=>ctrl(c)===p).length;
-  document.getElementById('ovP').innerHTML=(winner?`${PN[3-winner]} ${winner===2?'have':'has'} no sites left<br>`:'')+`${a} – ${b}<br>Territories ${rg(1)} vs ${rg(2)} · Realms ${famCount(1)} vs ${famCount(2)}`;
+  document.getElementById('ovP').innerHTML=(winner?`${PN[3-winner]} ${winner===2?'have':'has'} no sites left<br>`:'')+`${a} – ${b}<br>Territories ${rg(1)} vs ${rg(2)} · Realms ${famCount(1)} vs ${famCount(2)}<br>Rings dominated ${fullRings(1).length} vs ${fullRings(2).length} · Realms dominated ${fullRealms(1).length} vs ${fullRealms(2).length}`;
   document.getElementById('over').classList.add('on');
 }
 document.getElementById('ovB').onclick=newGame;
@@ -379,15 +440,15 @@ function renderTop(){
   document.getElementById('spYou').classList.toggle('turn',GAME.turn===1&&!GAME.over);
   document.getElementById('spAi').classList.toggle('turn',GAME.turn===2&&!GAME.over);
   document.getElementById('round').textContent=`Round ${Math.min(GAME.round,GAME.max)}/${GAME.max}`;
-  document.getElementById('mv').innerHTML=[...Array(MOVES)].map((_,i)=>`<i class="${i<GAME.moves?'on':''}" style="--pc:${PC[GAME.turn]}"></i>`).join('');
+  document.getElementById('mv').innerHTML=[...Array(GAME.maxMoves||MOVES)].map((_,i)=>`<i class="${i<GAME.moves?'on':''}" style="--pc:${PC[GAME.turn]}"></i>`).join('');
   const et=document.getElementById('endTurn');et.disabled=!(GAME.turn===1&&!GAME.over&&!GAME.busy);
   const st=document.getElementById('status'),go=document.getElementById('go');
   go.classList.toggle('wait',!myTurn());
-  const q=GAME.queue.length;
+  const q=0;
   st.innerHTML=GAME.over?'<b>Game over</b> · start a new game to play again'
     :GAME.battle?`<b style="color:#ffb347">Battle</b> · ${GAME.battle.n} · click the battle card to speed up`
-    :GAME.turn===1?(GAME.busy?'Resolving…':`<b style="color:var(--you)">Your turn</b> · ${GAME.moves} move${GAME.moves===1?'':'s'} left · claim open sites, or drop on an <span style="color:var(--ai)">AI site</span> to contest${q?` · ${q} battle${q>1?'s':''} queued`:''}`)
-    :`<b style="color:var(--ai)">AI is moving…</b>${q?` · ${q} battle${q>1?'s':''} queued`:''}`;
+    :GAME.turn===1?(GAME.busy?'Resolving…':`<b style="color:var(--you)">Your turn</b> · ${GAME.moves} move${GAME.moves===1?'':'s'} left · claim open sites, or drop on an <span style="color:var(--ai)">EvilDarthMonkey25 site</span> to attack (1 move)${q?` · ${q} battle${q>1?'s':''} queued`:''}`)
+    :`<b style="color:var(--ai)">EvilDarthMonkey25 is moving…</b>${q?` · ${q} battle${q>1?'s':''} queued`:''}`;
 }
 
 /* ================= Exploded 2D view: the whole hierarchy as a radial tree (pan & zoom) ================= */
@@ -420,7 +481,7 @@ let SEL=null; // {c, leaf} or {f}
 function renderMap(){
   let grid='',hier='',borders='',nodes='',labels='';
   // guides: ring circles + ring numbers, pole bands
-  for(let r=1;r<=K;r++){const R=ringR(r);grid+=`<circle r="${R}" fill="none" stroke="#ffffff07"/>`;
+  for(let r=1;r<=K;r++){const R=ringR(r),own=[1,2].find(p=>fullRings(p).includes(r));grid+=own?`<circle r="${R}" fill="none" stroke="${PC[own]}" stroke-opacity=".45" stroke-width="6" style="vector-effect:non-scaling-stroke"/>`:`<circle r="${R}" fill="none" stroke="#ffffff07"/>`;
     const[x,y]=pol(R,-67.5*D2R);grid+=`<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="700" fill="#ffffff30">R${r}</text>`;}
   {const[x,y]=pol(LY.POLE-24,-67.5*D2R);grid+=`<text x="${x}" y="${y}" text-anchor="middle" font-size="12" letter-spacing="2" font-weight="700" fill="#ffffff40">NEAR POLE</text>`;
    const[x2,y2]=pol(LY.FAR+4*LY.GAP+10,-67.5*D2R);grid+=`<text x="${x2}" y="${y2}" text-anchor="middle" font-size="12" letter-spacing="2" font-weight="700" fill="#ffffff40">FAR SIDE</text>`;}
@@ -446,7 +507,7 @@ function renderMap(){
       <path d="${sigilD(f.sig,17)}" fill="${f.c}" fill-rule="evenodd"/></g>`;
     const[lx,ly]=pol(LY.OUT,f.a);
     labels+=`<text x="${lx}" y="${ly-12}" text-anchor="middle" font-size="34" font-weight="720" letter-spacing="2" fill="${f.c}">${f.n.toUpperCase()}</text>
-      <text x="${lx}" y="${ly+24}" text-anchor="middle" font-size="19" fill="#8a93a8"><tspan fill="${PC[1]}">You ${ty}</tspan> · <tspan fill="${PC[2]}">AI ${ta}</tspan> · 5 of 8 to hold${own?` · <tspan fill="${PC[own]}" font-weight="700">${PN[own]} ${own===1?'hold':'holds'}</tspan>`:''}</text>`;});
+      <text x="${lx}" y="${ly+24}" text-anchor="middle" font-size="19" fill="#8a93a8"><tspan fill="${PC[1]}">You ${ty}</tspan> · <tspan fill="${PC[2]}">EvilDarthMonkey25 ${ta}</tspan> · 5 of 8 to hold${fullRealms(1).includes(fi)||fullRealms(2).includes(fi)?` · <tspan fill="#ffd36b" font-weight="700">DOMINATED</tspan>`:''}${own?` · <tspan fill="${PC[own]}" font-weight="700">${PN[own]} ${own===1?'hold':'holds'}</tspan>`:''}</text>`;});
   // territories + their sites
   const C=2*Math.PI*20;
   CATS.forEach((c,ci)=>{
@@ -459,14 +520,14 @@ function renderMap(){
         `<text class="ll" text-anchor="middle" dominant-baseline="central" font-size="7.5" font-weight="700" fill="${v?'#fff':'#c3cbdb'}">${lf.e}</text></g>`;});
     nodes+=`<g class="nd tr" data-t="${ci}" transform="translate(${c.x} ${c.y})"><title>${c.n} — ${f.n} · ring ${c.ring}</title>`+
       (GAME.battle===c?`<circle r="30" fill="none" stroke="#ffb347" stroke-width="3"><animate attributeName="r" values="24;40" dur=".8s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0" dur=".8s" repeatCount="indefinite"/></circle>`:'')+
-      (queued(c)&&GAME.battle!==c?`<circle r="31" fill="none" stroke="#ffb347" stroke-width="2" stroke-dasharray="5 4"><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="6s" repeatCount="indefinite"/></circle>`:'')+
+      (canContest(1,c)&&!GAME.busy&&GAME.battle!==c?`<circle r="31" fill="none" stroke="#ffb347" stroke-width="2" stroke-dasharray="5 4"><animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="6s" repeatCount="indefinite"/></circle>`:'')+
       (rch?`<circle r="27" fill="none" stroke="${PC[1]}" stroke-width="1.5" stroke-dasharray="3 4"><animate attributeName="stroke-opacity" values=".2;.9;.2" dur="2.2s" repeatCount="indefinite"/></circle>`:'')+
       `<circle r="20" fill="#0d111b" stroke="#ffffff14" stroke-width="3.5"/>`+
       (cnt(c,1)?`<circle r="20" fill="none" stroke="${PC[1]}" stroke-width="3.5" stroke-dasharray="${(cnt(c,1)/c.plots.length*C).toFixed(1)} ${C}" transform="rotate(-90)"/>`:'')+
       (cnt(c,2)?`<circle r="20" fill="none" stroke="${PC[2]}" stroke-width="3.5" stroke-dasharray="${(cnt(c,2)/c.plots.length*C).toFixed(1)} ${C}" stroke-dashoffset="${(-cnt(c,1)/c.plots.length*C).toFixed(1)}" transform="rotate(-90)"/>`:'')+
       `<circle r="15" fill="${ct?PC[ct]+(lk?'dd':'4a'):'#141a28'}" stroke="${sel?'#fff':nb?'#d6e4ff':f.c}" stroke-width="${sel?2.4:nb?2:1.2}"/>`+
       `<text text-anchor="middle" dominant-baseline="central" font-size="10" font-weight="750" fill="#eef2f8">${c.e}</text></g>`;
-    labels+=`<text class="tl" x="${c.x}" y="${c.y+LY.RP+20}" text-anchor="middle" font-size="12" font-weight="${sel?700:600}" fill="${sel?'#fff':ct?PC[ct]:'#a3acbf'}">${c.n}${cnt(c,1)&&cnt(c,2)?' · contested':lk?' · full':''}</text>`;
+    labels+=`<text class="tl" x="${c.x}" y="${c.y+LY.RP+20}" text-anchor="middle" font-size="12" font-weight="${sel?700:600}" fill="${sel?'#fff':ct?PC[ct]:'#a3acbf'}">${c.n}${canContest(1,c)&&!GAME.busy?' · attackable':lk?' · full':''}</text>`;
   });
   vp.innerHTML=`<g>${grid}</g><g>${hier}</g><g>${borders}</g><g>${nodes}</g><g pointer-events="none">${labels}</g>`;
 }
@@ -516,22 +577,23 @@ function showInfo(c,leaf){
   const el=document.getElementById('info');let h;
   if(leaf){const v=c.plots[leaf.i],ok=canSettle(c,leaf.i);
     h=badge(leaf.e,v?PC[v]:f.c,!!v)+`<div><b>${leaf.n}</b><small>${c.n} · ${f.n} · ${v?`held by <span style="color:${PC[v]}">${PN[v]}</span>`:ok?'<span style="color:var(--you)">open to settle now</span>':lk?'territory full':'unclaimed · out of reach'}</small></div>`;}
-  else{const st=queued(c)?'battle queued':a&&b?'contested':ct?`${PN[ct]} ${ct===1?'lead':'leads'}`:REACH[1].has(c)?'in your reach':'out of reach';
-    h=badge(c.e,ct?PC[ct]:f.c,ct&&lk)+`<div><b>${c.n}</b><small>${f.n} · <span style="color:var(--you)">You ${a}</span> · <span style="color:var(--ai)">AI ${b}</span> · ${n} sites · ${st} · ${c.nb.length} borders</small></div>`;}
+  else{const st=canContest(1,c)&&!GAME.busy?`attackable · ${attPool(1,c)} vs ${defPool(c,2)} sites`:ct?`${PN[ct]} ${ct===1?'lead':'leads'}`:REACH[1].has(c)?'in your reach':'out of reach';
+    h=badge(c.e,ct?PC[ct]:f.c,ct&&lk)+`<div><b>${c.n}</b><small>${f.n} · <span style="color:var(--you)">You ${a}</span> · <span style="color:var(--ai)">EvilDarthMonkey25 ${b}</span> · ${n} sites · ${st} · ${c.nb.length} borders</small></div>`;}
   const cc=canContest(1,c)&&!GAME.busy;
-  el.innerHTML=h+(cc?`<button id="contestHere" style="background:#7a4a14">Contest · ${Math.max(2,a)} vs ${Math.max(2,b)} dice</button>`:queued(c)?`<button disabled style="opacity:.6">Battle queued</button>`:'')+`<button id="openHere">Open ›</button>`;el.classList.add('on');
-  if(cc)document.getElementById('contestHere').onclick=()=>queueContest(1,c);
+  el.innerHTML=h+(cc?`<button id="contestHere" style="background:#7a4a14">Attack · ${Math.max(2,attPool(1,c))} vs ${Math.max(2,defPool(c,2))} dice</button>`:'')+`<button id="openHere">Open ›</button>`;el.classList.add('on');
+  if(cc)document.getElementById('contestHere').onclick=()=>attack(1,c);
   document.getElementById('openHere').onclick=()=>{hideInfo();if(stack.length)return;openRoot();const L=stack[0];pushChild(L,L.grid[c.step][c.ring]);
     if(leaf){const C=stack[1],it=C.items.find(x=>x.ref===leaf);if(it)C.qt=qFace(it.ring*SIG,it.step*45);}};
 }
 function showRealm(f){
   SEL={f};renderMap();const fi=FAM.indexOf(f);let a=0,b=0;for(const c of CATS)if(c.fam===fi){const k=ctrl(c);if(k===1)a++;else if(k===2)b++;}
   const own=famOwner(fi),el=document.getElementById('info');
-  el.innerHTML=`<span class="bd sg" style="box-shadow:inset 0 0 0 1.5px ${f.c}"><svg viewBox="-20 -20 40 40" width="24" height="24"><path d="${sigilD(f.sig,16)}" fill="${f.c}" fill-rule="evenodd"/></svg></span><div><b>${f.n}</b><small>8 territories · <span style="color:var(--you)">You lead ${a}</span> · <span style="color:var(--ai)">AI leads ${b}</span> · ${own?`held by ${PN[own]} (+5)`:'control 5 to hold it (+5)'}</small></div>`;
+  el.innerHTML=`<span class="bd sg" style="box-shadow:inset 0 0 0 1.5px ${f.c}"><svg viewBox="-20 -20 40 40" width="24" height="24"><path d="${sigilD(f.sig,16)}" fill="${f.c}" fill-rule="evenodd"/></svg></span><div><b>${f.n}</b><small>8 territories · <span style="color:var(--you)">You lead ${a}</span> · <span style="color:var(--ai)">EvilDarthMonkey25 leads ${b}</span> · ${own?`held by ${PN[own]} (+5)`:'control 5 to hold it (+5)'}</small></div>`;
   el.classList.add('on');
 }
 function hideInfo(){const had=SEL;SEL=null;document.getElementById('info').classList.remove('on');if(had)renderMap();}
-document.getElementById('tgMap').onclick=e=>{const on=!mapEl.classList.toggle('off');e.currentTarget.classList.toggle('on',on);if(!on)hideInfo();};
+document.getElementById('tgMap').onclick=e=>{const on=!mapEl.classList.toggle('off');e.currentTarget.classList.toggle('on',on);document.body.classList.toggle('mapOn',on);if(!on)hideInfo();};
+document.body.classList.add('mapOn');
 
 /* ================= Globe engine ================= */
 const qAxis=(x,y,z,a)=>{const s=Math.sin(a/2);return[Math.cos(a/2),x*s,y*s,z*s]};
@@ -592,9 +654,9 @@ function popTo(t){
   if(t>=stack.length-1&&t>=0)return;if(G.active)endDrag(null,true);
   if(t<0){if(stack.length)closeAll(false);return;}
   while(stack.length-1>t){const L=stack.pop();L.alive=false;dying.push(L);}
-  const top=stack[stack.length-1];top.chosen=null;top.qt=[1,0,0,0];restyle();renderCrumbs();buzz(8);kick();}
-function openRoot(){const L=makeLevel(ROOT,0);stack=[L];hPush(0);scrim.classList.add('on');stage.classList.add('on');restyle();renderCrumbs();kick();}
-function pushChild(L,it){L.chosen=it;L.qt=qFace(it.ring*SIG,it.step*45);
+  const top=stack[stack.length-1];top.chosen=null;top.qt=[1,0,0,0];restyle();renderCrumbs();buzz(8);SFX.back();kick();}
+function openRoot(){SFX.open();const L=makeLevel(ROOT,0);stack=[L];hPush(0);scrim.classList.add('on');stage.classList.add('on');restyle();renderCrumbs();kick();}
+function pushChild(L,it){SFX.enter();L.chosen=it;L.qt=qFace(it.ring*SIG,it.step*45);
   const C=makeLevel(it.ref,L.depth+1);stack.push(C);hPush(C.depth);restyle();renderCrumbs();buzz([6,30,10]);kick();}
 function closeAll(viaUI){
   if(viaUI&&HIST&&stack.length){skipPops++;try{history.go(-stack.length)}catch(_){skipPops--;HIST=false}}
@@ -623,7 +685,7 @@ const onMove=e=>{
   const snapped=raw*SIG;L.qt=qFace(snapped+(alpha-snapped)*.45,s*45);
 };
 addEventListener('onpointerrawupdate' in window?'pointerrawupdate':'pointermove',onMove,{passive:true});
-function setSel(it,slot){if(it!==G.item){buzz(5);G.pop=1;}G.item=it;G.slot=slot;}
+function setSel(it,slot){if(it!==G.item){buzz(5);G.pop=1;SFX.tick();}G.item=it;G.slot=slot;}
 addEventListener('pointerup',e=>endDrag(e,false));
 addEventListener('pointercancel',e=>endDrag(e,true));
 function endDrag(e,cancel){
@@ -636,8 +698,8 @@ function endDrag(e,cancel){
   else if(it.ref.children)pushChild(L,it);
   else{const c=it.ref.parent,i=it.ref.i;
     if(canSettle(c,i)){playerSettled(it.ref);L.qt=[1,0,0,0];}
-    else if(c.plots[i]===2&&canContest(1,c)&&!GAME.busy){queueContest(1,c);L.qt=[1,0,0,0];}
-    else{buzz([25,40,25]);L.qt=[1,0,0,0];G.reject=1;}}
+    else if(c.plots[i]===2&&canContest(1,c)&&!GAME.busy){L.qt=[1,0,0,0];attack(1,c);}
+    else{buzz([25,40,25]);SFX.reject();L.qt=[1,0,0,0];G.reject=1;}}
   kick();
 }
 addEventListener('keydown',e=>{if((e.key==='Escape'||e.key==='Backspace')&&stack.length){e.preventDefault();navBack(1);}});
@@ -771,17 +833,17 @@ function drawPill(L,dragging,sel,A){
   if(!dragging){
     if(L.node.root){t1='World';t2=`${REACH[1].size} territories in reach · hold & drag · tap outside to close`;}
     else{const c=L.node,free=c.plots.filter(v=>!v).length;t1=c.n;
-      t2=`You ${cnt(c,1)} · AI ${cnt(c,2)} · ${free} open · ${GAME.moves} moves · `+(queued(c)?'battle queued':canContest(1,c)?'drop on an AI site to contest':REACH[1].has(c)&&GAME.turn===1?'drag to an open site':locked(c)?'full':'out of reach — view only');}
+      t2=`You ${cnt(c,1)} · EvilDarthMonkey25 ${cnt(c,2)} · ${free} open · ${GAME.moves} moves · `+(canContest(1,c)?'EvilDarthMonkey25 territory · drop on a site to attack':cnt(c,2)?'EvilDarthMonkey25 territory':REACH[1].has(c)&&GAME.turn===1?'drag to an open site':locked(c)?'full':'out of reach — view only');}
   }
   else if(G.dist<9){t1='Drag in any direction';t2='Keep going to roll around the globe';}
   else if(!sel){t1='Empty space';t2='Keep dragging to wrap around';}
   else if(sel.center){t1=G.fresh&&L.depth===0?'Release to close':'Release to stay';t2='Center';}
   else if(sel.back){t1=parent?`↩  Back to ${parent.node.n}`:'↩  Close';t2='You reached the far side';col='#9aa6bf';}
   else if(L.node.root){const c=sel.ref,lk=locked(c),r=REACH[1].has(c);col=r?PC[1]:sel.c;t1=sel.n;
-    t2=`${FAM[c.fam].n} · You ${cnt(c,1)} · AI ${cnt(c,2)} / ${c.plots.length} · `+(queued(c)?'battle queued · ':cnt(c,1)&&cnt(c,2)?'contested · ':'')+(r?'in reach · release to enter':lk?'full':'out of reach · view only');}
+    t2=`${FAM[c.fam].n} · You ${cnt(c,1)} · EvilDarthMonkey25 ${cnt(c,2)} / ${c.plots.length} · `+(canContest(1,c)&&!GAME.busy?`attackable · ${attPool(1,c)} vs ${defPool(c,2)} · `:cnt(c,2)?'EvilDarthMonkey25 territory · ':'')+(r?'in reach · release to enter':lk?'full':'out of reach · view only');}
   else{const c=sel.ref.parent,v=c.plots[sel.ref.i],ok=canSettle(c,sel.ref.i);col=ok?PC[1]:v?PC[v]:'#5d667b';t1=sel.n;
     const ct=v===2&&canContest(1,c)&&!GAME.busy;if(ct)col='#ffb347';
-    t2=ct?`Held by AI · release to contest (1 move) · ${Math.max(2,cnt(c,1))} vs ${Math.max(2,cnt(c,2))} dice`:v===2&&queued(c)?'Held by AI · battle queued':v?`Held by ${PN[v]}`:ok?'Open site · release to claim (1 move)':GAME.moves<=0?'No moves left':locked(c)?'Territory is full':'Out of reach · claim next to your land first';}
+    t2=ct?`Held by EvilDarthMonkey25 · release to attack (1 move) · ${Math.max(2,attPool(1,c))} vs ${Math.max(2,defPool(c,2))} dice`:v===2&&queued(c)?'Held by EvilDarthMonkey25 · battle queued':v?`Held by ${PN[v]}`:ok?'Open site · release to claim (1 move)':GAME.moves<=0?'No moves left':locked(c)?'Territory is full':'Out of reach · claim next to your land first';}
   if(G.reject>.05&&isTopReject(L)){t1='Can’t settle there';col=PC[2];}
   ctx.font=`650 15px ${UI}`;const w1=ctx.measureText(t1).width;ctx.font=`500 12px ${UI}`;const w2=ctx.measureText(t2).width;
   const pw=Math.min(innerWidth-16,Math.max(w1,w2)+78),ph=50,px=cx-pw/2,py=cy+R+56+ph/2<H-8?cy+R+56:cy-R-56;
@@ -804,6 +866,83 @@ function toastMove(p,leaf){
   toast.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('on'),2400);
 }
 function toastText(t){toast.innerHTML=`<div>${t}</div>`;toast.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('on'),2200);}
+
+/* ================= Sound: synthesized with Web Audio (no files) ================= */
+const SFX=(()=>{
+  let ac=null,master=null,on=true;try{on=localStorage.getItem('gc.sound')!=='0'}catch(_){}
+  const init=()=>{if(ac)return;try{ac=new(window.AudioContext||window.webkitAudioContext)();master=ac.createGain();master.gain.value=.55;
+    const comp=ac.createDynamicsCompressor();master.connect(comp);comp.connect(ac.destination);}catch(_){ac=null}};
+  addEventListener('pointerdown',()=>{init();if(ac&&ac.state==='suspended')ac.resume();},{capture:true});
+  function tone(f,dur,{type='sine',vol=.2,at=0,slide=0,attack=.006}={}){
+    if(!on||!ac)return;const t=ac.currentTime+at,o=ac.createOscillator(),g=ac.createGain();
+    o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(30,f*slide),t+dur);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+attack);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+.03);}
+  function noise(dur,{vol=.2,at=0,freq=1200,q=1,type='bandpass'}={}){
+    if(!on||!ac)return;const t=ac.currentTime+at,len=Math.max(1,Math.ceil(ac.sampleRate*dur)),buf=ac.createBuffer(1,len,ac.sampleRate),d=buf.getChannelData(0);
+    for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,2);
+    const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=buf;f.type=type;f.frequency.value=freq;f.Q.value=q;g.gain.value=vol;
+    s.connect(f);f.connect(g);g.connect(master);s.start(t);}
+  let lastTick=0;
+  const api={
+    tick(){const n=performance.now();if(n-lastTick<28)return;lastTick=n;tone(2100,.03,{type:'triangle',vol:.045});tone(1050,.03,{vol:.03});},
+    open(){noise(.28,{vol:.1,freq:700,q:.6,type:'lowpass'});tone(180,.3,{vol:.07,slide:2.2});},
+    enter(){tone(300,.2,{vol:.08,slide:1.6});tone(450,.26,{vol:.06,at:.05,slide:1.3});noise(.2,{vol:.05,freq:1500,q:.8,at:.02});},
+    back(){tone(520,.18,{vol:.06,slide:.55});},
+    claim(){tone(784,.16,{type:'triangle',vol:.12});tone(1175,.3,{vol:.08,at:.045});tone(1568,.35,{vol:.04,at:.09});},
+    enemyClaim(){tone(330,.16,{type:'triangle',vol:.07});tone(247,.24,{vol:.05,at:.05});},
+    reject(){tone(150,.16,{type:'square',vol:.045,slide:.7});tone(110,.2,{type:'square',vol:.035,at:.06,slide:.7});},
+    dice(){for(let i=0;i<6;i++)noise(.04,{vol:.16,freq:2200+Math.random()*1800,q:5,at:i*.05});},
+    hit(){noise(.14,{vol:.2,freq:320,q:.9,type:'lowpass'});tone(95,.2,{vol:.13,slide:.55});},
+    win(){[523,659,784,1047].forEach((f,i)=>tone(f,.34,{type:'triangle',vol:.1,at:i*.075}));},
+    lose(){[392,330,262].forEach((f,i)=>tone(f,.4,{type:'sawtooth',vol:.04,at:i*.11}));tone(131,.6,{vol:.06,at:.3});},
+    bonus(){[784,988,1175,1568,1976].forEach((f,i)=>tone(f,.45,{vol:.08,at:i*.06}));noise(.7,{vol:.04,freq:7000,q:.4,type:'highpass',at:.05});},
+    turn(){tone(587,.22,{vol:.07});tone(880,.34,{vol:.055,at:.08});},
+    enemy(){tone(196,.28,{type:'triangle',vol:.07});tone(185,.34,{type:'triangle',vol:.05,at:.1});},
+    toggle(){on=!on;try{localStorage.setItem('gc.sound',on?'1':'0')}catch(_){}return on;},
+    get on(){return on}
+  };
+  return api;
+})();
+const sndBtn=document.getElementById('snd');
+const paintSnd=()=>{sndBtn.textContent=SFX.on?'♪':'♪̸';sndBtn.classList.toggle('on',SFX.on);sndBtn.title=SFX.on?'Sound on':'Sound off';};
+sndBtn.onclick=()=>{SFX.toggle();paintSnd();if(SFX.on)SFX.claim();};paintSnd();
+
+/* ================= Ring & realm dominance bonuses ================= */
+const RING_BONUS=8,REALM_BONUS=10,MAX_EXTRA=3;
+const fullRings=p=>{const o=[];for(let r=1;r<=K;r++)if(CATS.every(c=>c.ring!==r||ctrl(c)===p))o.push(r);return o;};
+const fullRealms=p=>FAM.map((f,fi)=>fi).filter(fi=>CATS.every(c=>c.fam!==fi||ctrl(c)===p));
+const extraMoves=p=>Math.min(MAX_EXTRA,fullRings(p).length+fullRealms(p).length);
+const BON={1:new Set(),2:new Set()};
+function checkBonuses(silent){
+  for(const p of[1,2]){
+    const now=new Set([...fullRings(p).map(r=>'r'+r),...fullRealms(p).map(fi=>'f'+fi)]);
+    if(!silent){
+      for(const k of now)if(!BON[p].has(k)){const nm=k[0]==='r'?`Ring ${k.slice(1)}`:FAM[+k.slice(1)].n,pts=k[0]==='r'?RING_BONUS:REALM_BONUS;
+        logEv(p,`<span class="bon">Secured ${nm}</span> · +${pts} pts, +1 move per turn`);
+        toastText(`<b style="color:${PC[p]}">${PN[p]}</b> ${p===1?'secure':'secures'} <b>${nm}</b> · +${pts} points · +1 move per turn`);SFX.bonus();}
+      for(const k of BON[p])if(!now.has(k)){const nm=k[0]==='r'?`Ring ${k.slice(1)}`:FAM[+k.slice(1)].n;logEv(p,`Lost control of ${nm}`);}
+    }
+    BON[p]=now;
+  }
+}
+
+/* ================= History: last 3 turns ================= */
+let LOG=[];
+function startTurnLog(p){LOG.push({round:GAME.round,p,ev:[]});LOG=LOG.slice(-3);renderLog();}
+function logEv(p,html){let e=LOG[LOG.length-1];if(!e||e.p!==p){LOG.push(e={round:GAME.round,p,ev:[]});LOG=LOG.slice(-3);}e.ev.push(html);renderLog();}
+function renderLog(){
+  const el=document.getElementById('histList');if(!el)return;
+  el.innerHTML=LOG.length?[...LOG].reverse().map(t=>`<div class="ht"><div class="hh" style="color:${PC[t.p]}">Round ${t.round} · ${PN[t.p]}</div>`+
+    (t.ev.length?`<ul>${t.ev.map(x=>`<li>${x}</li>`).join('')}</ul>`:'<div class="he">No moves yet</div>')+`</div>`).join('')
+    :'<div class="he">Nothing has happened yet.</div>';
+}
+const panel=id=>{const el=document.getElementById(id);return{toggle(force){const on=el.classList.toggle('on',force);return on;}}};
+document.getElementById('histBtn').onclick=e=>{const on=panel('hist').toggle();e.currentTarget.classList.toggle('on',on);};
+document.getElementById('histClose').onclick=()=>{panel('hist').toggle(false);document.getElementById('histBtn').classList.remove('on');};
+document.getElementById('helpBtn').onclick=()=>document.getElementById('help').classList.add('on');
+document.getElementById('help').addEventListener('click',e=>{if(e.target.id==='help'||e.target.closest('.hclose'))document.getElementById('help').classList.remove('on');});
+addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('help').classList.remove('on');});
 
 addEventListener('resize',resize);
 resize();newGame();
