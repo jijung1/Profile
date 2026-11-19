@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jin Jung | Integration Engineer</title>
+  <meta name="description" content="Jin Jung, Senior MuleSoft Developer and Integration Engineer." />
+  <meta name="theme-color" content="#88A2F7" />
+
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/favicons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicons/favicon-16x16.png">
+  <link rel="manifest" href="icons/favicons/site.webmanifest">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="CSS/profile.css" />
+</head>
+<body>
+  <canvas id="canvas" aria-hidden="true"></canvas>
+
+  <div class="wrapper" id="wrapper">
+    <!-- ================= Intro ================= -->
+    <div class="intro" id="intro">
+      <div class="intro__title">
+        <h1 aria-label="Jin Jung"><span data-d=".30">J</span><span data-d=".10">I</span><span data-d=".40">N</span><span class="gap" data-d="0">&nbsp;</span><span data-d=".05">J</span><span data-d=".35">U</span><span data-d=".15">N</span><span data-d=".25">G</span></h1>
+        <p class="intro__role" id="role">Integration Engineer</p>
+        <div class="badge" id="badge" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <defs><path id="circle" d="M60,60 m-48,0 a48,48 0 1,1 96,0 a48,48 0 1,1 -96,0" /></defs>
+            <text textLength="298" lengthAdjust="spacing"><textPath href="#circle">MuleSoft Developer · Integration Engineer · </textPath></text>
+            <path d="M60 50 L66 66 L60 62 L54 66 Z" fill="#fff" />
+          </svg>
+        </div>
+      </div>
+      <div class="intro__cta" id="cta">
+        <button class="pill" id="takeoff"><span class="roll"><span>Take off</span><span>Take off</span></span></button>
+      </div>
+      <div class="hint" id="hint"><span>Scroll to explore my journey</span><span class="hint__line"></span></div>
+    </div>
+
+    <!-- ================= Chapters =================
+         data-p   = where on the journey (0–1) the chapter shows. Keep these OFF the turn positions.
+         data-hud = text for the bottom-left "Now viewing" readout. -->
+    <div class="chapters" id="chapters">
+      <article class="chapter" data-p="0.10" data-hud="Hello">
+        <div class="chapter__meta"><span>01 / 06</span><i></i><span>Hello · Cedar Park, TX</span></div>
+        <h2>Hi, I'm <em>Jin</em></h2>
+        <p>Senior MuleSoft Developer and Integration Engineer, building secure enterprise integrations for the U.S. Department of Veterans Affairs.</p>
+      </article>
+
+      <article class="chapter" data-p="0.24" data-hud="Marine Corps">
+        <div class="chapter__meta"><span>02 / 06</span><i></i><span>2013 – 2017 · Kaneohe Bay, HI</span></div>
+        <h2>U.S. Marine <em>Corps</em></h2>
+        <p>As an Aviation Support Equipment Manager I ran procurement, logistics and maintenance for more than $12.5M of equipment and led a team of 17. I also built an electronic tracking system for precision measurement equipment that improved operational efficiency by 40%.</p>
+      </article>
+
+      <article class="chapter" data-p="0.38" data-hud="Chapman">
+        <div class="chapter__meta"><span>03 / 06</span><i></i><span>2019 · Orange, CA</span></div>
+        <h2>Back to <em>school</em></h2>
+        <p>B.S. in Computer Science at Chapman University, where I was also a Supplemental Instructor for Introduction to *nix, helping 90+ students find their way around the command line.</p>
+      </article>
+
+      <article class="chapter" data-p="0.52" data-hud="Veterans Affairs">
+        <div class="chapter__meta"><span>04 / 06</span><i></i><span>2020 – Present · Austin, TX</span></div>
+        <h2>Serving <em>veterans</em></h2>
+        <p>At the Department of Veterans Affairs I've been the primary solution engineer for migrating 100+ on-prem Oracle Fusion Middleware services to MuleSoft hybrid-cloud integrations.</p>
+      </article>
+
+      <article class="chapter" data-p="0.68" data-hud="The craft">
+        <div class="chapter__meta"><span>05 / 06</span><i></i><span>The craft · API-led connectivity</span></div>
+        <h2>Built to <em>last</em></h2>
+        <p>Reusable System, Process and Experience APIs. DataWeave transformations for multipart CSV batch uploads. Asynchronous invoice publishing over WebLogic JMS T3S. MUnit coverage above 90%, and the escalation point for high-severity incidents.</p>
+      </article>
+
+      <article class="chapter" data-p="0.84" data-hud="Certified">
+        <div class="chapter__meta"><span>06 / 06</span><i></i><span>Credentials · MuleSoft</span></div>
+        <h2>Fully <em>certified</em></h2>
+        <p>MuleSoft Certified Developer, Level 1 and Level 2, and MuleSoft Certified Platform Architect. All three are active.</p>
+      </article>
+    </div>
+
+    <!-- ================= Outro / contact ================= -->
+    <div class="outro" id="outro">
+      <p>Thanks for flying by.<br/>Let's build something <em>reliable</em> together.</p>
+      <div class="outro__links">
+        <a class="pill pill--solid" href="mailto:jinjung013@gmail.com"><span class="roll"><span>Email me</span><span>Email me</span></span></a>
+        <a class="pill" href="https://www.linkedin.com/in/jin-jung-a64530179/" target="_blank" rel="noopener"><span class="roll"><span>LinkedIn ↗</span><span>LinkedIn ↗</span></span></a>
+        <a class="pill" href="https://github.com/jijung1/" target="_blank" rel="noopener"><span class="roll"><span>GitHub ↗</span><span>GitHub ↗</span></span></a>
+        <a class="pill" href="resume.pdf" target="_blank" rel="noopener"><span class="roll"><span>Resume ↗</span><span>Resume ↗</span></span></a>
+      </div>
+      <button class="outro__again" id="again"><span class="roll"><span>↺ Fly again</span><span>↺ Fly again</span></span></button>
+    </div>
+
+    <!-- ================= HUD ================= -->
+    <dl class="hud" id="hud">
+      <div><dt>Chapter</dt><dd id="hudNum">00 / 06</dd></div>
+      <div><dt>Now viewing</dt><dd id="hudName">Take-off</dd></div>
+    </dl>
+    <div class="scrollbar" id="scrollbar"><div class="scrollbar__handle" id="handle"></div></div>
+
+    <button class="bar-btn sound-btn" id="sound" aria-label="Toggle lo-fi music" aria-pressed="false">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </button>
+    <button class="bar-btn about-btn" id="aboutBtn" aria-label="About Jin" aria-expanded="false">
+      <span class="label roll"><span>About</span><span>About</span></span>
+      <span class="close-x"></span>
+    </button>
+
+    <!-- ================= About overlay ================= -->
+    <section class="about" id="about" aria-hidden="true" aria-label="About Jin Jung">
+      <div class="about__content">
+        <img class="portrait" src="images/jinjung.png" alt="Portrait of Jin Jung" />
+        <p>I work on integration architecture, API design and production support. Since 2020 I've been the primary solution engineer for migrating more than 100 Oracle Fusion Middleware services to reusable MuleSoft integrations.</p>
+        <p>Before engineering I served as a U.S. Marine, where I managed aviation support equipment, led a team of 17, and worked within federal audit and compliance standards.</p>
+
+        <h2>Projects</h2>
+        <div>
+          <a class="ref" href="https://pdf.perpetualapps.dev/" target="_blank" rel="noopener">
+            <div><div class="ref__title">PDF Tool</div><div class="ref__src">pdf.perpetualapps.dev</div></div>
+            <span class="ref__go roll"><span>Visit ↗</span><span>Visit ↗</span></span>
+          </a>
+          <a class="ref" href="https://world-conquest.perpetualapps.dev/" target="_blank" rel="noopener">
+            <div><div class="ref__title">World Conquest</div><div class="ref__src">world-conquest.perpetualapps.dev</div></div>
+            <span class="ref__go roll"><span>Visit ↗</span><span>Visit ↗</span></span>
+          </a>
+        </div>
+
+        <h2>Toolkit</h2>
+        <ul class="tags">
+          <li>Mule 4</li><li>Anypoint Platform</li><li>DataWeave</li><li>API-led connectivity</li>
+          <li>MUnit</li><li>Java</li><li>Python</li><li>C#</li><li>Azure</li><li>OAuth2 / JWT / mTLS</li>
+        </ul>
+
+        <h2>Education</h2>
+        <div>
+          <div class="ref"><div><div class="ref__title">B.S. Computer Science</div><div class="ref__src">Chapman University</div></div></div>
+          <div class="ref"><div><div class="ref__title">Associate's Certificate</div><div class="ref__src">Santa Monica College</div></div></div>
+        </div>
+
+        <h2>Contact</h2>
+        <div>
+          <a class="ref" href="mailto:jinjung013@gmail.com">
+            <div><div class="ref__title">Email</div><div class="ref__src">jinjung013@gmail.com</div></div>
+            <span class="ref__go roll"><span>Write ↗</span><span>Write ↗</span></span>
+          </a>
+          <a class="ref" href="https://www.linkedin.com/in/jin-jung-a64530179/" target="_blank" rel="noopener">
+            <div><div class="ref__title">LinkedIn</div><div class="ref__src">in/jin-jung</div></div>
+            <span class="ref__go roll"><span>Connect ↗</span><span>Connect ↗</span></span>
+          </a>
+          <a class="ref" href="https://github.com/jijung1/" target="_blank" rel="noopener">
+            <div><div class="ref__title">GitHub</div><div class="ref__src">jijung1</div></div>
+            <span class="ref__go roll"><span>Browse ↗</span><span>Browse ↗</span></span>
+          </a>
+          <a class="ref" href="resume.pdf" target="_blank" rel="noopener">
+            <div><div class="ref__title">Resume</div><div class="ref__src">PDF</div></div>
+            <span class="ref__go roll"><span>Open ↗</span><span>Open ↗</span></span>
+          </a>
+        </div>
+
+        <p class="credit">Jin Jung · Cedar Park, TX</p>
+      </div>
+    </section>
+  </div>
+
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+  </script>
+  <script type="module">
+    import * as THREE from "three";
+
+    const $ = (id) => document.getElementById(id);
+
+    /* =========================================================
+       Content (read from the HTML)
+       ========================================================= */
+    const CHAPTERS = [...document.querySelectorAll(".chapter")].map((el, i, all) => ({
+      el, p: parseFloat(el.dataset.p), hud: el.dataset.hud,
+      num: String(i + 1).padStart(2, "0") + " / " + String(all.length).padStart(2, "0"),
+    }));
+
+    // Sky palette keyed by scroll progress (day → sunset → dusk → night)
+    const PALETTE = [
+      { p: 0.00, top: "#6d86f2", bottom: "#b8c6fb", glow: "#e7ecff", cloud: "#ffffff", glowAmt: 0.25 },
+      { p: 0.30, top: "#5f7cf0", bottom: "#c3cffc", glow: "#ffffff", cloud: "#ffffff", glowAmt: 0.30 },
+      { p: 0.50, top: "#7b7fe0", bottom: "#ffc4a8", glow: "#ffe0b8", cloud: "#fff1ea", glowAmt: 0.70 },
+      { p: 0.64, top: "#5b55c4", bottom: "#f59bb0", glow: "#ffb59a", cloud: "#ffd8dc", glowAmt: 0.70 },
+      { p: 0.80, top: "#1d2170", bottom: "#5f4fae", glow: "#a07ad8", cloud: "#a8a6e0", glowAmt: 0.35 },
+      { p: 1.00, top: "#05061c", bottom: "#1c1f5c", glow: "#3d3d9a", cloud: "#5d61a8", glowAmt: 0.20 },
+    ];
+
+    /* =========================================================
+       About overlay (works even without WebGL)
+       ========================================================= */
+    let aboutOpen = false;
+    function toggleAbout() {
+      aboutOpen = !aboutOpen;
+      document.body.classList.toggle("about-open", aboutOpen);
+      $("about").setAttribute("aria-hidden", String(!aboutOpen));
+      $("aboutBtn").setAttribute("aria-expanded", String(aboutOpen));
+    }
+    $("aboutBtn").addEventListener("click", toggleAbout);
+
+    /* =========================================================
+       Lo-fi generator (Web Audio, no files). Off by default; the sound
+       button starts it (browsers only allow audio after a click).
+       ========================================================= */
+    const Lofi = (() => {
+      const BPM = 72, SPB = 60 / BPM, S16 = SPB / 4;
+      const SWING = 0.28;        // delay on off-beat 16ths, as a fraction of a 16th
+      const VOLUME = 0.8;
+      // One chord per bar: Fmaj9 → Em7 → Dm9 → Cmaj9 (MIDI note numbers)
+      const CHORDS = [
+        { bass: 41, notes: [57, 64, 67, 72] },
+        { bass: 40, notes: [55, 59, 62, 67] },
+        { bass: 38, notes: [53, 57, 60, 64] },
+        { bass: 36, notes: [52, 55, 59, 62] },
+      ];
+      const PENTA = [64, 67, 69, 72, 74, 76, 79]; // C major pentatonic, upper register
+      const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
+
+      let ctx, master, bus, wobble, noiseBuf, timer = null, suspendTimer = null;
+      let step = 0, bar = 0, nextTime = 0;
+
+      function init() {
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+        master = ctx.createGain(); master.gain.value = 0;
+        const tone = ctx.createBiquadFilter(); tone.type = "lowpass"; tone.frequency.value = 3200; tone.Q.value = 0.3;
+        const comp = ctx.createDynamicsCompressor(); comp.threshold.value = -18; comp.ratio.value = 3;
+        bus = ctx.createGain(); bus.gain.value = 0.9;
+        bus.connect(tone); tone.connect(comp); comp.connect(master); master.connect(ctx.destination);
+
+        // Tape wobble: a slow LFO on every note's pitch (in cents)
+        wobble = ctx.createGain(); wobble.gain.value = 9;
+        const lfo = ctx.createOscillator(); lfo.frequency.value = 0.35; lfo.connect(wobble); lfo.start();
+
+        noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
+        const d = noiseBuf.getChannelData(0);
+        for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+
+        // Vinyl crackle: faint hiss + sparse pops, looped
+        const cb = ctx.createBuffer(1, ctx.sampleRate * 4, ctx.sampleRate), c = cb.getChannelData(0);
+        for (let i = 0; i < c.length; i++) {
+          c[i] = (Math.random() * 2 - 1) * 0.012;
+          if (Math.random() < 0.0004) c[i] += (Math.random() * 2 - 1) * 0.6;
+        }
+        const crackle = ctx.createBufferSource(); crackle.buffer = cb; crackle.loop = true;
+        const hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.frequency.value = 1200;
+        const cg = ctx.createGain(); cg.gain.value = 0.5;
+        crackle.connect(hp); hp.connect(cg); cg.connect(master); crackle.start();
+      }
+
+      function env(g, t, peak, sustainAt, sustain, end) {
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(peak, t + 0.012);
+        if (sustainAt) g.gain.exponentialRampToValueAtTime(sustain, t + sustainAt);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + end);
+      }
+      // Electric-piano-ish voice: gentle FM (ratio 1) with a decaying index → soft "tine" attack
+      function keys(m, t, vel, dur) {
+        const f = mtof(m);
+        const car = ctx.createOscillator(); car.frequency.value = f;
+        const mod = ctx.createOscillator(); mod.frequency.value = f;
+        const idx = ctx.createGain();
+        idx.gain.setValueAtTime(f * 1.2, t);
+        idx.gain.exponentialRampToValueAtTime(f * 0.08, t + 0.6);
+        mod.connect(idx); idx.connect(car.frequency);
+        wobble.connect(car.detune); wobble.connect(mod.detune);
+        const g = ctx.createGain(); env(g, t, vel, 0.9, vel * 0.35, dur);
+        car.connect(g); g.connect(bus);
+        car.start(t); mod.start(t); car.stop(t + dur + 0.05); mod.stop(t + dur + 0.05);
+        car.onended = () => { try { wobble.disconnect(car.detune); wobble.disconnect(mod.detune); } catch (e) {} };
+      }
+      function bass(m, t, dur) {
+        const o = ctx.createOscillator(); o.type = "triangle"; o.frequency.value = mtof(m);
+        const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 320;
+        const g = ctx.createGain(); env(g, t, 0.32, 0, 0, dur);
+        o.connect(lp); lp.connect(g); g.connect(bus); o.start(t); o.stop(t + dur + 0.05);
+      }
+      function kick(t, v) {
+        const o = ctx.createOscillator();
+        o.frequency.setValueAtTime(110, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.13);
+        const g = ctx.createGain(); env(g, t, 0.55 * v, 0, 0, 0.42);
+        o.connect(g); g.connect(bus); o.start(t); o.stop(t + 0.45);
+      }
+      function noiseHit(t, type, freq, q, peak, decay) {
+        const s = ctx.createBufferSource(); s.buffer = noiseBuf;
+        const f = ctx.createBiquadFilter(); f.type = type; f.frequency.value = freq; f.Q.value = q;
+        const g = ctx.createGain(); env(g, t, peak, 0, 0, decay);
+        s.connect(f); f.connect(g); g.connect(bus); s.start(t, Math.random() * 1.5); s.stop(t + decay + 0.05);
+      }
+      function snare(t) {
+        noiseHit(t, "bandpass", 1700, 0.8, 0.2, 0.22);
+        const o = ctx.createOscillator(); o.type = "triangle"; o.frequency.value = 190;
+        const g = ctx.createGain(); env(g, t, 0.12, 0, 0, 0.1);
+        o.connect(g); g.connect(bus); o.start(t); o.stop(t + 0.15);
+      }
+      const hat = (t, v) => noiseHit(t, "highpass", 7000, 0.5, 0.06 * v, 0.05);
+
+      // One 16th-note step of the pattern
+      function schedule(t) {
+        const s = step % 16, ch = CHORDS[bar % CHORDS.length];
+        if (s % 2 === 1) t += S16 * SWING;
+        const human = () => (Math.random() - 0.5) * 0.012;
+
+        if (s === 0) {
+          ch.notes.forEach((m, i) => keys(m, t + i * 0.018, 0.09, SPB * 4));   // slow strum
+          bass(ch.bass, t, SPB * 2.2);
+        }
+        if (s === 10) {
+          bass(ch.bass + (Math.random() < 0.3 ? 7 : 0), t, SPB * 1.2);
+          if (Math.random() < 0.6) ch.notes.slice(1).forEach((m, i) => keys(m, t + i * 0.015, 0.05, SPB * 1.6));
+        }
+        if (s === 0 || s === 10 || (s === 7 && Math.random() < 0.25)) kick(t + human(), s === 0 ? 1 : 0.8);
+        if (s === 4 || s === 12) snare(t + human());
+        if (s % 2 === 0) hat(t + human(), s % 4 === 0 ? 1 : 0.6);
+        else if (Math.random() < 0.2) hat(t + human(), 0.35);
+        if (s % 4 === 2 && Math.random() < 0.3) {
+          keys(PENTA[Math.floor(Math.random() * PENTA.length)], t, 0.045, SPB * 1.5);  // sparse melody
+        }
+        step++;
+        if (step % 16 === 0) bar++;
+      }
+      function pump() {
+        while (nextTime < ctx.currentTime + 0.2) { schedule(nextTime); nextTime += S16; }
+      }
+
+      return {
+        start() {
+          if (!ctx) init();
+          clearTimeout(suspendTimer);
+          ctx.resume();
+          step = 0; bar = 0; nextTime = ctx.currentTime + 0.08;
+          if (!timer) timer = setInterval(pump, 25);
+          master.gain.cancelScheduledValues(ctx.currentTime);
+          master.gain.setTargetAtTime(VOLUME, ctx.currentTime, 0.5);
+        },
+        stop() {
+          if (!ctx) return;
+          clearInterval(timer); timer = null;
+          master.gain.cancelScheduledValues(ctx.currentTime);
+          master.gain.setTargetAtTime(0, ctx.currentTime, 0.4);
+          suspendTimer = setTimeout(() => { if (!timer) ctx.suspend(); }, 2500); // save CPU once faded
+        },
+      };
+    })();
+
+    $("sound").addEventListener("click", () => {
+      const btn = $("sound"), on = !btn.classList.contains("on");
+      btn.classList.toggle("on", on); btn.setAttribute("aria-pressed", String(on));
+      on ? Lofi.start() : Lofi.stop();
+    });
+
+    /* =========================================================
+       Intro sequence
+       ========================================================= */
+    function intro() {
+      $("wrapper").classList.add("is-ready");
+      document.querySelectorAll(".intro__title h1 span").forEach((s) => {
+        setTimeout(() => s.classList.add("in"), 300 + parseFloat(s.dataset.d) * 1000);
+      });
+      setTimeout(() => $("role").classList.add("in"), 1000);
+      setTimeout(() => $("badge").classList.add("in"), 1300);
+      setTimeout(() => $("cta").classList.add("in"), 1600);
+      setTimeout(() => ["sound", "aboutBtn"].forEach((id) => $(id).classList.add("in")), 1800);
+      setTimeout(() => $("hint").classList.add("in"), 2100);
+    }
+
+    /* =========================================================
+       Three.js scene
+       ========================================================= */
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas: $("canvas"), antialias: true });
+    } catch (err) {
+      // No WebGL: fall back to a normal scrolling page with every section visible.
+      document.body.classList.add("static");
+      ["sound", "aboutBtn"].forEach((id) => $(id).classList.add("in"));
+      $("wrapper").classList.add("is-ready");
+      document.querySelectorAll(".intro__title h1 span, #role, #badge").forEach((el) => el.classList.add("in"));
+      $("cta").style.display = "none";
+      throw err;
+    }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0xb8c6fb, 60, 620);
+    const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 2400);
+    scene.add(camera);
+
+    const LEN = 1700; // distance travelled over the full scroll
+
+    // ---- Rollercoaster track: discrete turns placed BETWEEN chapters, so text reads on calm straights.
+    //   c = centre (track distance s = -z), w = length, x = sideways swing, y = dip (-) / rise (+)
+    const TURNS = [
+      { c: 290,  w: 190, x:  45, y: -6 },
+      { c: 530,  w: 210, x: -60, y:  5 },
+      { c: 765,  w: 190, x:  40, y: -8 },
+      { c: 1020, w: 220, x: -55, y:  6 },
+      { c: 1290, w: 200, x:  50, y: -6 },
+      { c: 1560, w: 200, x: -35, y:  4 },
+    ];
+    // quintic ease: zero velocity AND zero acceleration at both ends → no jolt entering/leaving a turn
+    const smoother = (t) => (t <= 0 ? 0 : t >= 1 ? 1 : t * t * t * (t * (t * 6 - 15) + 10));
+    const hill = (t) => (t <= 0 || t >= 1 ? 0 : Math.pow(Math.sin(Math.PI * t), 4));
+    function pathAt(z) {
+      const s = -z;
+      let x = 0, y = 0;
+      for (const tr of TURNS) {
+        const t = (s - (tr.c - tr.w / 2)) / tr.w;
+        x += tr.x * smoother(t);
+        y += tr.y * hill(t);
+      }
+      return { x, y };
+    }
+    // Curvature of the track -> how hard to bank into the turn
+    function bankAt(z) {
+      const h = 20, a = pathAt(z + h).x, b = pathAt(z).x, c = pathAt(z - h).x;
+      // positive curvature = turning right → roll right (negative Z rotation)
+      return THREE.MathUtils.clamp(-((a - 2 * b + c) / (h * h)) * 45, -0.6, 0.6);
+    }
+
+    // ---- Sky dome
+    const skyUniforms = {
+      uTop: { value: new THREE.Color() }, uBottom: { value: new THREE.Color() },
+      uGlow: { value: new THREE.Color() }, uGlowAmt: { value: 0.3 },
+    };
+    const sky = new THREE.Mesh(
+      new THREE.SphereGeometry(1500, 48, 32),
+      new THREE.ShaderMaterial({
+        uniforms: skyUniforms, side: THREE.BackSide, depthWrite: false, fog: false,
+        vertexShader: `varying vec3 vDir; void main(){ vDir = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+        fragmentShader: `
+          uniform vec3 uTop, uBottom, uGlow; uniform float uGlowAmt; varying vec3 vDir;
+          void main(){
+            float h = vDir.y;
+            vec3 col = mix(uBottom, uTop, smoothstep(-0.05, 0.55, h));
+            col = mix(col, uBottom * 0.92, smoothstep(0.0, -0.4, h));
+            float band = exp(-abs(h - 0.02) * 9.0) * uGlowAmt;
+            float sunSide = pow(max(dot(normalize(vec3(vDir.x, 0.0, vDir.z)), vec3(0.0,0.0,-1.0)), 0.0), 3.0);
+            col = mix(col, uGlow, clamp(band * (0.55 + 0.45 * sunSide), 0.0, 1.0));
+            gl_FragColor = vec4(col, 1.0);
+          }`,
+      })
+    );
+    sky.renderOrder = -2;
+    scene.add(sky);
+
+    // ---- Stars
+    const starGeo = new THREE.BufferGeometry();
+    const starPos = new Float32Array(1800 * 3);
+    for (let i = 0; i < 1800; i++) {
+      const v = new THREE.Vector3().randomDirection();
+      v.y = Math.abs(v.y) * 0.9 + 0.02;
+      v.normalize().multiplyScalar(1300);
+      starPos.set([v.x, v.y, v.z], i * 3);
+    }
+    starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
+    const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.6, sizeAttenuation: false, transparent: true, opacity: 0, fog: false, depthWrite: false });
+    const stars = new THREE.Points(starGeo, starMat);
+    scene.add(stars);
+
+    // ---- Sun glow
+    function glowTexture() {
+      const c = document.createElement("canvas"); c.width = c.height = 256;
+      const g = c.getContext("2d");
+      const grd = g.createRadialGradient(128, 128, 0, 128, 128, 128);
+      grd.addColorStop(0, "rgba(255,255,255,1)");
+      grd.addColorStop(0.12, "rgba(255,245,230,.9)");
+      grd.addColorStop(0.4, "rgba(255,220,190,.25)");
+      grd.addColorStop(1, "rgba(255,220,190,0)");
+      g.fillStyle = grd; g.fillRect(0, 0, 256, 256);
+      const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+    }
+    const sun = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), color: 0xffd9b0, transparent: true, opacity: 0, fog: false, depthWrite: false, blending: THREE.AdditiveBlending }));
+    sun.scale.set(420, 420, 1);
+    scene.add(sun);
+
+    // ---- Clouds (procedural canvas textures + sprites)
+    function cloudTexture(seed) {
+      const c = document.createElement("canvas"); c.width = 512; c.height = 256;
+      const g = c.getContext("2d");
+      let s = seed; const rnd = () => (s = (s * 9301 + 49297) % 233280) / 233280;
+      for (let i = 0; i < 26; i++) {
+        const x = 110 + rnd() * 292, y = 120 + (rnd() - 0.5) * 70 - Math.sin(((x - 110) / 292) * Math.PI) * 30;
+        const r = 40 + rnd() * 70;
+        const grd = g.createRadialGradient(x, y, 0, x, y, r);
+        grd.addColorStop(0, "rgba(255,255,255,.55)");
+        grd.addColorStop(0.5, "rgba(255,255,255,.25)");
+        grd.addColorStop(1, "rgba(255,255,255,0)");
+        g.fillStyle = grd; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+      }
+      const sh = g.createLinearGradient(0, 90, 0, 220);
+      sh.addColorStop(0, "rgba(0,0,0,0)"); sh.addColorStop(1, "rgba(120,130,200,.22)");
+      g.globalCompositeOperation = "source-atop"; g.fillStyle = sh; g.fillRect(0, 0, 512, 256);
+      const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+    }
+    const cloudTex = [cloudTexture(3), cloudTexture(17), cloudTexture(42), cloudTexture(91)];
+    const clouds = [];
+    const rand = (a, b) => a + Math.random() * (b - a);
+    for (let i = 0; i < 320; i++) {
+      const mat = new THREE.SpriteMaterial({ map: cloudTex[i % 4], transparent: true, depthWrite: false, fog: true, opacity: 1 });
+      const sp = new THREE.Sprite(mat);
+      const z = rand(60, -LEN - 500);
+      const progressAtZ = THREE.MathUtils.clamp(-z / LEN, 0, 1);
+      const side = Math.random() < 0.5 ? -1 : 1;
+      let x = side * rand(9, 120), y;
+      if (Math.random() < 0.35) {      // "sea of clouds" layer, lower
+        y = rand(-34, -14); x = rand(-160, 160);
+      } else {
+        y = rand(-12, 26) + (Math.random() < 0.15 ? rand(10, 40) : 0);
+      }
+      if (Math.random() < 0.06) x = rand(-4, 4); // a few to fly straight through
+      const w = rand(28, 80) * (y < -14 ? 1.6 : 1);
+      sp.scale.set(w, w * 0.5, 1);
+      const track = pathAt(z);
+      sp.position.set(x + track.x, y + track.y * 0.5, z);
+      sp.userData.base = rand(0.75, 1) * (progressAtZ > 0.72 ? 0.0 : 1); // thin out high up
+      sp.userData.drift = rand(-0.6, 0.6);
+      clouds.push(sp); scene.add(sp);
+    }
+
+    // ---- Paper plane
+    const planeGeo = new THREE.BufferGeometry();
+    const P = {
+      nose: [0, 0, -1.4], lt: [-1.0, 0.08, 0.6], rt: [1.0, 0.08, 0.6],
+      tail: [0, 0, 0.6], keel: [0, -0.32, 0.6], lf: [-0.16, 0.02, 0.6], rf: [0.16, 0.02, 0.6],
+    };
+    const tris = [
+      P.nose, P.lt, P.lf,   P.nose, P.lf, P.tail,
+      P.nose, P.rf, P.rt,   P.nose, P.tail, P.rf,
+      P.nose, P.keel, P.tail,
+    ];
+    planeGeo.setAttribute("position", new THREE.Float32BufferAttribute(tris.flat(), 3));
+    planeGeo.computeVertexNormals();
+    const planeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.75, metalness: 0, side: THREE.DoubleSide, flatShading: true });
+    const plane = new THREE.Mesh(planeGeo, planeMat);
+    const planeRig = new THREE.Group();
+    planeRig.add(plane);
+    camera.add(planeRig);
+    planeRig.position.set(0, -6, -9);
+
+    const hemi = new THREE.HemisphereLight(0xdfe6ff, 0x8893d8, 1.4);
+    const dir = new THREE.DirectionalLight(0xffffff, 1.6);
+    dir.position.set(2, 6, -4);
+    scene.add(hemi, dir);
+
+    /* =========================================================
+       Momentum scroll: input adds to a desired speed that decays by friction; the actual speed
+       eases toward it, so each wheel tick blends into one continuous glide instead of a spurt.
+       ========================================================= */
+    const TOTAL = 16000;       // scroll units for the whole journey
+    const SCROLL_GAIN = 0.8;   // distance travelled per unit of wheel delta
+    const FRICTION = 0.9;      // how quickly the glide coasts down (lower = longer coast)
+    const ACCEL = 1.8;         // how quickly speed ramps toward the desired speed
+    const MAX_SPEED = 900;     // cap on travel speed (units per second)
+    let current = 0, vTarget = 0, vel = 0, glideTo = null, started = false;
+    function push(d) {
+      glideTo = null;
+      vTarget = THREE.MathUtils.clamp(vTarget + d * SCROLL_GAIN * FRICTION, -MAX_SPEED, MAX_SPEED);
+    }
+    function start() {
+      if (started) return;
+      started = true;
+      $("intro").classList.add("intro--out");
+      $("hint").classList.add("out");
+      ["hud", "scrollbar"].forEach((id) => $(id).classList.add("in"));
+    }
+    addEventListener("wheel", (e) => {
+      if (aboutOpen) return;
+      e.preventDefault();
+      const d = e.deltaMode === 1 ? e.deltaY * 32 : e.deltaY;
+      push(d);
+      if (d > 0) start();
+    }, { passive: false });
+
+    let touchY = null;
+    addEventListener("touchstart", (e) => { touchY = e.touches[0].clientY; }, { passive: true });
+    addEventListener("touchmove", (e) => {
+      if (aboutOpen || touchY === null) return;
+      const y = e.touches[0].clientY, d = (touchY - y) * 3;
+      touchY = y; push(d);
+      if (d > 0) start();
+    }, { passive: true });
+    addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && aboutOpen) return toggleAbout();
+      if (aboutOpen) return;
+      const step = { ArrowDown: 400, PageDown: 1200, " ": 1200, ArrowUp: -400, PageUp: -1200 }[e.key];
+      if (step) { e.preventDefault(); push(step); if (step > 0) start(); }
+    });
+
+    $("takeoff").addEventListener("click", () => { start(); push(1200); });
+    $("again").addEventListener("click", () => { glideTo = 0; });
+
+    // Pointer parallax
+    const mouse = { x: 0, y: 0, sx: 0, sy: 0 };
+    addEventListener("pointermove", (e) => {
+      mouse.x = (e.clientX / innerWidth) * 2 - 1;
+      mouse.y = (e.clientY / innerHeight) * 2 - 1;
+    });
+
+    /* =========================================================
+       Helpers
+       ========================================================= */
+    const cA = new THREE.Color(), cB = new THREE.Color();
+    function samplePalette(p, key, out) {
+      let i = 0; while (i < PALETTE.length - 2 && p > PALETTE[i + 1].p) i++;
+      const a = PALETTE[i], b = PALETTE[i + 1];
+      const t = THREE.MathUtils.smoothstep(p, a.p, b.p);
+      if (key === "glowAmt") return a.glowAmt + (b.glowAmt - a.glowAmt) * t;
+      cA.set(a[key]); cB.set(b[key]);
+      return out.copy(cA).lerp(cB, t);
+    }
+
+    const tmpColor = new THREE.Color(), cloudColor = new THREE.Color();
+    let lastChapter = -1, lastHud = -2, outroShown = false;
+    let planeIn = 0, bank = 0;
+    const clock = new THREE.Clock();
+
+    /* =========================================================
+       Loop
+       ========================================================= */
+    function tick() {
+      const dt = Math.min(clock.getDelta(), 0.05);
+      const t = clock.elapsedTime;
+
+      if (glideTo !== null) {
+        current += (glideTo - current) * (1 - Math.exp(-1.4 * dt));
+        vTarget = vel = 0;
+        if (Math.abs(glideTo - current) < 1) { current = glideTo; glideTo = null; }
+      } else {
+        vTarget *= Math.exp(-FRICTION * dt);
+        vel += (vTarget - vel) * (1 - Math.exp(-ACCEL * dt));
+        current += vel * dt;
+        if (current <= 0) { current = 0; vel = Math.max(vel, 0); vTarget = Math.max(vTarget, 0); }
+        if (current >= TOTAL) { current = TOTAL; vel = Math.min(vel, 0); vTarget = Math.min(vTarget, 0); }
+      }
+      const p = current / TOTAL;
+      const pitchVel = vel / MAX_SPEED;
+
+      mouse.sx += (mouse.x - mouse.sx) * 0.04;
+      mouse.sy += (mouse.y - mouse.sy) * 0.04;
+
+      // Camera
+      const camY = THREE.MathUtils.smoothstep(p, 0.05, 0.9) * 95;
+      const camZ = -p * LEN;
+      const here = pathAt(camZ), ahead = pathAt(camZ - 60);
+      camera.position.set(here.x + mouse.sx * 3, camY + here.y - mouse.sy * 1.5, camZ);
+      camera.lookAt(ahead.x + mouse.sx * 6, camY + ahead.y - 3 - mouse.sy * 2 + p * 6, camZ - 60);
+      bank += (bankAt(camZ - 25) - bank) * (1 - Math.exp(-2.2 * dt));
+      camera.rotateZ(bank);
+      sky.position.copy(camera.position);
+      stars.position.copy(camera.position);
+      sun.position.set(camera.position.x + 60, camera.position.y + 18 - p * 30, camera.position.z - 1300);
+
+      // Colors
+      samplePalette(p, "top", skyUniforms.uTop.value);
+      samplePalette(p, "bottom", skyUniforms.uBottom.value);
+      samplePalette(p, "glow", skyUniforms.uGlow.value);
+      skyUniforms.uGlowAmt.value = samplePalette(p, "glowAmt");
+      scene.fog.color.copy(skyUniforms.uBottom.value);
+      samplePalette(p, "cloud", cloudColor);
+      hemi.color.copy(skyUniforms.uTop.value).lerp(tmpColor.set(0xffffff), 0.5);
+      hemi.groundColor.copy(skyUniforms.uBottom.value);
+      dir.color.copy(skyUniforms.uGlow.value);
+      planeMat.color.copy(tmpColor.set(0xffffff)).lerp(cloudColor, 0.35);
+      starMat.opacity = THREE.MathUtils.smoothstep(p, 0.7, 0.95) * 0.95;
+      sun.material.opacity = THREE.MathUtils.smoothstep(p, 0.3, 0.5) * (1 - THREE.MathUtils.smoothstep(p, 0.66, 0.8));
+      document.body.style.background = "#" + skyUniforms.uBottom.value.getHexString();
+
+      // Clouds
+      for (const c of clouds) {
+        c.position.x += c.userData.drift * dt;
+        const dz = c.position.z - camera.position.z;
+        const near = THREE.MathUtils.smoothstep(-dz, 4, 40);
+        const behind = dz > 2 ? 0 : 1;
+        c.material.opacity = c.userData.base * near * behind;
+        c.material.color.copy(cloudColor);
+      }
+
+      // Plane
+      planeIn += ((started ? 1 : 0) - planeIn) * 0.03;
+      planeRig.position.set(
+        mouse.sx * 1.6,
+        -1.9 - (1 - planeIn) * 6 + Math.sin(t * 1.3) * 0.12 - mouse.sy * 0.5,
+        -9
+      );
+      plane.rotation.z = -mouse.sx * 0.55 + bank * 0.6 + Math.sin(t * 0.9) * 0.05;
+      plane.rotation.x = 0.06 + THREE.MathUtils.clamp(pitchVel, -1, 1) * 0.12 - mouse.sy * 0.15;
+      plane.rotation.y = -mouse.sx * 0.25;
+
+      // UI
+      $("handle").style.transform = `scaleY(${p})`;
+
+      let active = -1, passed = -1;
+      CHAPTERS.forEach((c, i) => {
+        if (Math.abs(p - c.p) < 0.055) active = i;
+        if (p >= c.p - 0.055) passed = i;
+      });
+      if (active !== lastChapter) {
+        CHAPTERS.forEach((c, i) => c.el.classList.toggle("in", i === active));
+        lastChapter = active;
+      }
+      const showOutro = p > 0.955;
+      const hudIdx = showOutro ? CHAPTERS.length : passed;
+      if (hudIdx !== lastHud) {
+        const n = String(CHAPTERS.length).padStart(2, "0");
+        $("hudNum").textContent = hudIdx < 0 ? `00 / ${n}` : hudIdx >= CHAPTERS.length ? `${n} / ${n}` : CHAPTERS[hudIdx].num;
+        $("hudName").textContent = hudIdx < 0 ? "Take-off" : hudIdx >= CHAPTERS.length ? "Say hello" : CHAPTERS[hudIdx].hud;
+        lastHud = hudIdx;
+      }
+      if (showOutro !== outroShown) { $("outro").classList.toggle("in", showOutro); outroShown = showOutro; }
+
+      renderer.render(scene, camera);
+      requestAnimationFrame(tick);
+    }
+
+    addEventListener("resize", () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+    });
+
+    tick();
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(intro);
+  </script>
+</body>
+</html>
